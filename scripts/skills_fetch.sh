@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 extractDir=~/Documents/MXL/skills
-mxlotDir=~/dev/diablo/medianxlofflinetools
+mxlotDir="$(cd "$(dirname "$0")/.." && pwd)"
 
 mkdir -p $extractDir
 for mpq in "/Users/kambala/Library/Application Support/CrossOver/Bottles/D2/drive_c/Program Files/Diablo II"/medianxl-*.mpq ; do
@@ -20,3 +20,7 @@ rm -rf $skillsDir/{0,1,2,3,4,5,6}
 mv $extractDir/{0,1,2,3,4,5,6} $skillsDir
 
 rm -rf $extractDir
+
+cd "$mxlotDir"
+git add -A $skillsDir/*
+git commit -m "update skill icons to Sigma $1"
