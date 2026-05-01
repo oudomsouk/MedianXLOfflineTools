@@ -6,9 +6,9 @@
 4				11															statpts
 5				9															newskills
 6				21															hitpoints
-7	500	12		21					to Life	to Life		1	79	1					maxhp
+7	500	12		21	9	to Life and Mana	to Life and Mana		to Life	to Life		1	79	1	11	1	1		maxhp
 8				21															mana
-9	500	12		21					to Mana	to Mana		1	77	1					maxmana
+9	500	12		21	7	to Life and Mana	to Life and Mana		to Mana	to Mana		1	77	1	11	1	1		maxmana
 10				21															stamina
 11	150	10		21					Maximum Stamina	Maximum Stamina		1	73	1					maxstamina
 12				8															level
@@ -56,8 +56,8 @@
 57	0	14							to Minimum Poison Damage	to Minimum Poison Damage		1	150	1					poisonmindam
 58	0	14							to Maximum Poison Damage	to Maximum Poison Damage		1	147	1					poisonmaxdam
 59	0	9																	poisonlength
-60	0	7							Life stolen per Hit	Life stolen per Hit		2	144	1					lifedrainmindam
-62	0	7							Mana stolen per Hit	Mana stolen per Hit		2	143	1					manadrainmindam
+60	0	7			62	Life and Mana stolen per Hit	Life and Mana stolen per Hit		Life stolen per Hit	Life stolen per Hit		2	144	1	13	2	1		lifedrainmindam
+62	0	7			60	Life and Mana stolen per Hit	Life and Mana stolen per Hit		Mana stolen per Hit	Mana stolen per Hit		2	143	1	13	2	1		manadrainmindam
 64	0	7							Stamina stolen per Hit	Stamina stolen per Hit		2	145	1					stamdrainmindam
 66	0	10							Stun Attack	Stun Attack		3	142	0					stunlength
 67	50	9																	velocitypercent
@@ -67,7 +67,7 @@
 73	90	9																	maxdurability
 74	1000	14							Life Regenerated per Second	Life Regenerated per Second		32	80	1					hpregen
 75	100	8							Durability	Durability			8	2					item_maxdurability_percent
-76	100	8			77	Maximum Life and Mana	Maximum Life and Mana		Decrease Maximum Life	Maximum Life		4	78	2	10	4	2		item_maxhp_percent
+76	100	8			77	Maximum Life and Mana	Maximum Life and Mana		Maximum Life	Maximum Life		4	78	2	10	4	2		item_maxhp_percent
 77	100	8			76	Maximum Life and Mana	Maximum Life and Mana		Maximum Mana	Maximum Mana		4	76	2	10	4	2		item_maxmana_percent
 78	0	10							Attacker Takes Damage of	Attacker Takes Damage of		3	29	2					item_attackertakesdamage
 79	100	9							Gold Find	Gold Find		2	16	1					item_goldbonus
@@ -76,7 +76,7 @@
 82	20	9																	item_timeduration
 83	0	4							to Amazon Skill Levels	to Amazon Skill Levels		13	207	1				3	item_addclassskills
 85	25	8							to Experience Gained	to Experience Gained		4	17	1					item_addexperience
-86	0	10							Life after each Kill	Life after each Kill		1	41	1					item_healafterkill
+86	0	10			138	Life and Mana after each Kill	Life and Mana after each Kill		Life after each Kill	Life after each Kill		1	41	1	12	1	1		item_healafterkill
 87	50	8							to All Vendor Prices	to All Vendor Prices		20	13	1					item_reducedprices
 88	0	32	16	32														16	achievement_counts
 89	5	8							to Light Radius	to Light Radius		1	10	1					item_lightradius
@@ -122,7 +122,7 @@
 135	0	7							Chance of Open Wounds	Chance of Open Wounds		2	122	1					item_openwounds
 136	0	8							Chance of Crushing Blow	Chance of Crushing Blow		2	125	1					item_crushingblow
 137	0	10							Kick Damage	Kick Damage		1	168	1					item_kickdamage
-138	0	10							Mana after each Kill	Mana after each Kill		1	40	1					item_manaafterkill
+138	0	10			86	Life and Mana after each Kill	Life and Mana after each Kill		Mana after each Kill	Mana after each Kill		1	40	1	12	1	1		item_manaafterkill
 139	0	10							Life after each Demon Kill	Life after each Demon Kill		1	40	1					item_healafterdemonkill
 140	0	10																	item_extrablood
 141	0	8							Deadly Strike	Deadly Strike		2	124	1					item_deadlystrike
@@ -138,7 +138,7 @@
 151	1	7																11	item_aura
 152		1							Indestructible	Indestructible			205	0					item_indesctructible
 153		1							Cannot Be Frozen	Cannot Be Frozen		3	33	0					item_cannotbefrozen
-154	50	8							Slower Stamina Drain	Slower Stamina Drain		2	72	1					item_staminadrainpct
+154	50	8							Faster Stamina Drain	to Stamina Drain		20	72	1					item_staminadrainpct
 155	0	7							Reanimate as:	Reanimate as:		23	30	1				12	item_reanimate
 156	0	10																	item_pierce
 157	0	7							Fires Magic Arrows	Fires Magic Arrows		3	184	0					item_magicarrow
@@ -175,8 +175,8 @@
 204	0	16							(%d/%d Charges)	(%d/%d Charges)		24	204					16	item_charged_skill
 205	20	7							Maximum Avoid Chance	Maximum Avoid Chance		4	49	2					avoidcap
 206	0	8																17	innate-xbow-proc
-208	0	7							Life on Striking	Life on Striking		1	45	1					item_healonstriking
-209	0	7							Mana on Striking	Mana on Striking		1	44	1					item_manaonstriking
+208	0	7			209	Life and Mana on Striking	Life and Mana on Striking		Life on Striking	Life on Striking		1	45	1	15	1	1		item_healonstriking
+209	0	7			208	Life and Mana on Striking	Life and Mana on Striking		Mana on Striking	Mana on Striking		1	44	1	15	1	1		item_manaonstriking
 210	0	10							Life on Melee Attack	Life on Melee Attack		1	43	1					skill_healonstrikingmelee
 213	100	8							Maximum Block Chance	Maximum Block Chance		4	66	2					blockcap
 214	0	10							Defense	Defense	(Based on Character Level)	6	93	1					item_armor_perlevel
@@ -185,6 +185,11 @@
 217	0	10							to Mana	to Mana	(Based on Character Level)	6	75	1					item_mana_perlevel
 218	0	10							to Maximum Damage	to Maximum Damage	(Based on Character Level)	6	170	1					item_maxdamage_perlevel
 219	0	5							\green;Shrine Blessed	\green;Shrine Blessed		3	249	0					blessings_counter
+220	0	13																	counter1
+221	0	13																	counter2
+222	0	13																	counter3
+223	0	13																	counter4
+224	0	13																	recent_kills
 225	0	10							Bonus to Attack Rating	Bonus to Attack Rating	(Based on Character Level)	7	165	1					item_tohitpercent_perlevel
 226	0	5																	item_absolsigil
 227		5																	item_elesigil
@@ -228,7 +233,7 @@
 289	0	8							\dgreen;Orb Effects Applied to this Item are Doubled\blue;	\dgreen;Orb Effects Applied to this Item are Doubled\blue;		36	234	0					item_multimo
 290	0	8																10	item_mocount
 291	0	8																	skill_justkilledsomeone
-292	0	7							%d%% Chance to cast level %d %s on Death Blow	%d%% Chance to cast level %d %s on Death Blow		15	204					17	item_skillonanykill
+292	0	7							%d%% Chance to cast level %d %s on Death Blow	%d%% Chance to cast level %d %s on Death Blow		15	206					17	item_skillonanykill
 294	0	8							\dgreen;Allows Runewords up to Level	\dgreen;Allows Runewords up to Level		3	236	2					runeword_level
 295	500	11							Mana on Melee Attack	Mana on Melee Attack		1	42	1					item_manaonstrikingmelee
 297	1	2																	W_M
@@ -326,7 +331,7 @@
 423		8																	BoneChimesValue
 424		8																	BoneChimesDummy
 425		5																	alchemy_oil_counter
-427	0	9							Activation Frequency	Activation Frequency		2	126	2					afreq
+427	0	9							Activation Frequency	Activation Frequency		38	45	2				5	afreq
 428	5	6							to Maximum Exodia Minions	to Maximum Exodia Minions		1	132	1					item_exodia_max
 429	5	6							to Maximum Paladin Minions	to Maximum Paladin Minions		1	197	1					item_paladin_max
 431	100	9							Bonus to Poison Skill Duration	Bonus to Poison Skill Duration		4	195	1					skill_poison_dur
@@ -340,7 +345,7 @@
 445	0	6							to Maximum Barbarian Minions	to Maximum Barbarian Minions		1	196	1					skill_ancientspirits_synergy
 446	0	8							Damage to Protector Spirit Bloodlust	Damage to Protector Spirit Bloodlust		4	195	1					skill_shamanspath_synergy
 447	0	9							Restored:	Restored:		7	234	2					trophy_fragmentation
-448	100	8																	potion_efficiency
+448	100	8							Potion Effectiveness	Potion Effectiveness		2	100	1					potion_efficiency
 449	1001	14								%s Maximum Skill Level Increased by %d		37	234	2				12	special_skillcap
 450	0	5																	trophy_counter
 452	1	5																	cube_upgrade_1

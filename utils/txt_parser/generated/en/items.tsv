@@ -955,7 +955,7 @@ w99	Avenger Guard (3)		2	2	0		23	219	0									invba5				phlm,tier		4
 70@	Yew Wand (Sacred)		1	2	1		30	0	168			36	38					invywn		0	6	qwnd	1	2
 71@	Bone Wand (Sacred)		1	2	1		30	0	170			37	40					invbwn		0	6	qwnd	1	2
 72@	Grim Wand (Sacred)		1	2	1		30	0	172			39	44					invgwn		0	6	qwnd	1	2
-73@	War Hammer (Sacred)		2	3	1		30	470	0			42	47					invwhm		14	0	qham,ct1w	1	-1
+73@	War Hammer (Sacred)		2	3	1		30	450	0			42	47					invwhm		14	0	qham,ct1w	1	-1
 74@	Maul (Sacred)		2	4	1		30	630	0		1			74	82			invmau		16	0	qham,ct2w	1	-1
 75@	Great Maul (Sacred)		2	3	1		30	736	0		1			76	89			invgma		16	0	qham,ct2w	1	-1
 76@	Light Crossbow (Sacred)		2	3	1		30	400	0		1			74	80			invlxb		11	0	qxbw	1	-1
@@ -1137,7 +1137,7 @@ msf	Staff of Kings		1	3	1		0	12	0		1			13	16			invmsf	10	0	6	staf	1	-1
 mz01	Maiden Bow (Mastercrafted)		2	4	1		30	0	750		1			77	85			MastercraftedBow	0	0	13	qbow,mw01	1	-1
 mz02	Kukri (Mastercrafted)		1	3	1		30	0	550			45	50					MastercraftedKnife	0	0	14	qknf,mw02	1	-1
 mz03	Gothic Staff (Mastercrafted)		2	3	1		30	0	333		1			63	69			GothicStaff	0	0	15	qstf,mw03	1	-1
-mz05	Flying Kinzhal (Mastercrafted)		1	2	1	1	30	0	402							1	1	MastercraftedTKnife	0	0	0	qtkn,elrx	1	-1
+mz05	Flying Kinzhal (Mastercrafted)		1	2	1	1	30	0	519			41	45			68	75	MastercraftedTKnife	0	0	13	qtkn,mw05	1	-1
 mz22	Echo Sabre (Mastercrafted)		1	3	1		30	443	0			44	55					MastercraftedSaber	0	11	0	swor,mw22	1	-1
 o10	Stag Bow (4)		2	4	1		26	0	457		1			0	0	1	1	invam1		0	0	abow,elrx	1	0
 o11	Reflex Bow (4)		2	4	1		28	0	570		1			47	64			invam2		0	15	abow,tier	1	0
@@ -1176,7 +1176,9 @@ wol	Wirt's Other Leg		1	3	1		115	0	0			13	18					invwol		0	0	wrtl	1	-1
 #X5	Cube Reagent (Secret)\n\orange;Emblem of Destruction		1	1	2		0	0	0									newsignet5				embl		-1
 #X6	Cube Reagent (Secret)\n\orange;Emblem of Lies		1	1	2		0	0	0									newsignet6				embl		-1
 #X9	Cube Reagent\n\orange;Griswold's Treasure	\yellow;The items vary for each Hero Class\n\grey;Cube with Oil of Craft to Open Box\n	2	2	2		0	0	0									reagentreward				thng		-1
-&100	\orange;Mystic Orb\nImperfect Sphere	Right-Click to Apply	1	1	2		0	0	0									orb_misc				myst,asa#		-1
+&100	\orange;Mystic Orb\nImperfect Sphere	Right-Click to Apply	1	1	2		0	0	0									orb_misc_imperfect				myst,asa#		-1
+&101	\orange;Mystic Orb\nApple of Discord	Right-Click to Apply	1	1	2		0	0	0									orb_any				myst,asa#		-1
+&102	\orange;Mystic Orb\nEye of Beholder	Right-Click to Apply	1	1	2		0	0	0									orb_armo				myst,asa#		-1
 &66	\orange;Mystic Orb\nKara's Trinket	Right-Click to Apply	1	1	2		0	0	0									orb_misc				myst,asa#		-1
 &67	\orange;Mystic Orb\nMonsterball	Right-Click to Apply	1	1	2		0	0	0									orb_misc				myst,asa#		-1
 &68	\orange;Mystic Orb\nHeart of Frost	Right-Click to Apply	1	1	2		0	0	0									orb_misc				myst,asa#		-1
@@ -1209,8 +1211,8 @@ wol	Wirt's Other Leg		1	3	1		115	0	0			13	18					invwol		0	0	wrtl	1	-1
 &95	\orange;Mystic Orb\nEye of the Storm	Right-Click to Apply	1	1	2		0	0	0									orb_weap				myst,asa#		-1
 &96	\orange;Mystic Orb\nInvisible	Right-Click to Apply	1	1	2		0	0	0									orb_armo				myst,asa#		-1
 &97	\orange;Mystic Orb\nWeight of Talent	Right-Click to Apply	1	1	2		0	0	0									orb_armo				myst,asa#		-1
-&98	\orange;Mystic Orb\nImperfect Sphere	Right-Click to Apply	1	1	2		0	0	0									orb_misc				myst,asa#		-1
-&99	\orange;Mystic Orb\nImperfect Sphere	Right-Click to Apply	1	1	2		0	0	0									orb_misc				myst,asa#		-1
+&98	\orange;Mystic Orb\nImperfect Sphere	Right-Click to Apply	1	1	2		0	0	0									orb_misc_imperfect				myst,asa#		-1
+&99	\orange;Mystic Orb\nImperfect Sphere	Right-Click to Apply	1	1	2		0	0	0									orb_misc_imperfect				myst,asa#		-1
 01+	\orange;Mystic Orb	Right-Click to Apply	1	1	2		0	0	0									orb_armo				myst		-1
 01^	\dgreen;Signet of Learning	Right-click: Free Attribute Points: %d	1	1	2		0	0	0									sigil1B				poti		-1
 02+	\orange;Mystic Orb	Right-Click to Apply	1	1	2		0	0	0									orb_armo				myst		-1
@@ -1317,7 +1319,7 @@ wol	Wirt's Other Leg		1	3	1		115	0	0			13	18					invwol		0	0	wrtl	1	-1
 7$c	\purple;Turquoise		1	1	2		12	0	0									invgstc				gemo,gem2		-1
 7$d	\purple;Flawless Turquoise		1	1	2		15	0	0									invgstd				gemo,gem3		-1
 7$e	\purple;Perfect Turquoise		1	1	2		18	0	0									invgste				gemo,gem4		-1
-7o[	Cube Reagent\n\orange;Oil of Craft	90\nThe Oil of Craft lets you create\ncontainers of various items:\n\nOil + Arcane Crystal\n--> Arcane Cluster (1)\n\nOil + Rune (up to Zod)\n--> Rune Container (1)\n\nOil + Enchanted Rune (up to Zod)\n--> Enchanted Rune Container (1)\n\nOil + Perfect Gem\n--> Gem Cluster (1)\n\nOil + Portable Shrine\n--> Shrine Vessel (1)\n\nOil + Corrupted Crystal\n--> Corrupted Cluster (1)\n	1	1	2		0	0	0									oil_jewelcraft				thng		-1
+7o[	Cube Reagent\n\orange;Oil of Craft	90\nThe Oil of Craft lets you create\ncontainers of various items:\n\nOil + Arcane Crystal\n--> Arcane Cluster (1)\n\nOil + Rune (up to Zod)\n--> Rune Container (1)\n\nOil + Enchanted Rune (up to Zod)\n--> Enchanted Rune Container (1)\n\nOil + Perfect Gem\n--> Gem Cluster (1)\n\nOil + Portable Shrine\n--> Shrine Vessel (1)\n\nOil + Corrupted Crystal\n--> Corrupted Cluster (1)\n\nOil + Greater Signet of Learning\n--> Container of Knowledge (1)\n\nOil + Belladonna Elixir\n--> Barrel of Belladonna (1)\n\nOil + Apple\n--> Barrel of Apples (1)\n\nOil + Full Rejuvenation Potion\n--> Barrel of Rejuvenation (1)\n\nOil + Corrupted Treasure\n--> Stash O' Treasures (1)\n	1	1	2		0	0	0									oil_jewelcraft				thng		-1
 9$a	\purple;Chipped Bloodstone		1	1	2		1	0	0									invgsca				gemp,gem0		-1
 9$b	\purple;Flawed Bloodstone		1	1	2		5	0	0									invgscb				gemp,gem1		-1
 9$c	\purple;Bloodstone		1	1	2		12	0	0									invgscc				gemp,gem2		-1
@@ -1604,13 +1606,14 @@ brc6	unused	\grey;Cube your Class Charm with 2 Arcane Crystals to Add Bonus\nIf 
 brz	Brain		1	1	2		0	0	0									invbrnz				body		-1
 bxa	Soul of Kabraxis	80\nBanisher of Light Trophy Challenge\nRequirements: \nKill Kabraxis without being hit by his\nPillar of Poison\nDo not die\n\nCube Soul of Kabraxis within 10 seconds\nGrants: \nAdds 5-10 Damage\nLocked to current character class\n	1	1	2		100	0	0									braxwhorl	255			grtz		-1
 c000	Paragon Soulstone	\red;WARNING: UNCLAIMED REWARDS DUE TO OVERLEVELLING ARE LOST\n\green;Transmute in the cube at the correct level to get rewards	1	1	2		110	0	0									ParagonSoulstone	255			grtz		-1
-c@c	(Sorceress Only)\n\red;Moon Symbol	A blessed symbol of the goddess...	1	1	2		0	0	0									moon1				poti		-1
+c@c	\blue;Moon Cookie	\dgrey;...yet something \green;feels off\dgrey; about it\nLooks like a perfect recreation of Moon Symbol of the past	1	1	2		0	0	0									moon1				poti		-1
 cats	\gold;Catalyst of Transference	83\nTransference:\nYou must charge your catalyst to use it.\n\nCatalyst + Positronic Brains (max 10)\n--> Catalyst (+1-10 Charges)\n\nCatalyst + Any Full Shrine\n--> Catalyst (-1 Charge) + Selected Shrine\n\nYou can cube your catalyst by itself to\nselect a different shrine to output.\n\nCatalyst\n--> Catalyst (rerolled output Shrine)\n	1	1	2		0	0	0									jewelcataon	255			thng		-1
 cm1	\orange;Cycle		1	1	2		0	0	0									invch1				scha		-1
 cm2	\orange;Cycle		1	2	2		0	0	0									invch2				mcha		-1
 cm3	\orange;Cycle		1	3	2		0	0	0									invsst				lcha		-1
 cosx	\orange;Corrupted Cluster	(Right Click to Collect)	1	1	2		0	0	0									invscr6				thng		-1
 cotw	Relic		1	1	2		0	0	0									invgswe	255			reli		-1
+cotx	Relic		1	2	2		0	0	0									invTimeRelic	255			reli		-1
 cqv	Bolt Quiver		1	3	2	1	0	0	0									invcqv				xboq	2	-1
 cr01	Quest Item\n\gold;Charged Riftstone (\green;1\gold;)	\grey;Difficulty: \red;Hard\n\grey;Area Level: 121\n\gold;Dimensional Labyrinth 1\n\n\grey;Right click to open a portal\n	1	1	2		115	0	0									ChargedRunestoneG				thng		-1
 cr02	Quest Item\n\gold;Charged Riftstone (\green;2\gold;)	\dgrey;- Transmute for Full Monster Stats -\n\n\grey;Difficulty: \red;Hard\n\grey;Area Level: 122\n\gold;Dimensional Labyrinth 2\n\n\grey;Right click to open a portal\n	1	1	2		116	0	0									ChargedRunestoneG				thng		-1
@@ -1687,6 +1690,27 @@ dr13	Quest Item\n\gold;Depleted Riftstone (\red;8\gold;)	Transmute With Arcane C
 dr14	Quest Item\n\gold;Depleted Riftstone (\red;9\gold;)	Transmute With Arcane Crystal to Charge\n	1	1	2		0	0	0									DepletedRunestone				thng		-1
 dr15	Quest Item\n\gold;Depleted Riftstone (\red;10\gold;)	Transmute With Arcane Crystal to Charge\n	1	1	2		0	0	0									DepletedRunestone				thng		-1
 dtm	\grey;Cube Reagent\n\orange;Dark Tome	\blue;+1 to Dark Portal\n\grey;Cube with Class Charm to Add Bonus\n	1	2	2		0	0	0									invdtm				thng		-1
+du01	\gold;Heroic Duncraig Crafting Scroll	\blue;+4 Required Level\nAdds 3-4 Damage\n\gold;Assur's Bane Upgrade	1	1	2		0	0	0									invbsc				thng		-1
+du02	\gold;Heroic Duncraig Crafting Scroll	\blue;+12 Required Level\n+1 to All Skills\n\gold;Assur's Bane Upgrade	1	1	2		0	0	0									invbsc				thng		-1
+du03	\gold;Heroic Duncraig Crafting Scroll	\blue;+4 Required Level\n+15% Damage to Undead\n\gold;Assur's Bane Upgrade	1	1	2		0	0	0									invbsc				thng		-1
+du04	\gold;Heroic Duncraig Crafting Scroll	\blue;+4 Required Level\nMaximum Life +1%\n\gold;Assur's Bane Upgrade	1	1	2		0	0	0									invbsc				thng		-1
+du05	\gold;Heroic Duncraig Crafting Scroll	\blue;+5 Required Level\n-3% to Enemy Fire Resistance\n\gold;Assur's Bane Upgrade	1	1	2		0	0	0									invbsc				thng		-1
+du06	\gold;Heroic Duncraig Crafting Scroll	\blue;+5 Required Level\n-3% to Enemy Cold Resistance\n\gold;Assur's Bane Upgrade	1	1	2		0	0	0									invbsc				thng		-1
+du07	\gold;Heroic Duncraig Crafting Scroll	\blue;+5 Required Level\n-3% to Enemy Lightning Resistance\n\gold;Assur's Bane Upgrade	1	1	2		0	0	0									invbsc				thng		-1
+du08	\gold;Heroic Duncraig Crafting Scroll	\blue;+5 Required Level\n-3% to Enemy Poison Resistance\n\gold;Assur's Bane Upgrade	1	1	2		0	0	0									invbsc				thng		-1
+du09	\gold;Heroic Duncraig Crafting Scroll	\blue;Fire Resist -10%\n-1 to Light Radius\n+40% Weapon Physical Damage\n\red;Requires at least 1 Light Radius on item\n\gold;Assur's Bane Upgrade	1	1	2		0	0	0									invbsc				thng		-1
+du10	\gold;Heroic Duncraig Crafting Scroll	\blue;Fire Resist -10%\n-1 to Light Radius\n+5% Innate Elemental Damage\n\red;Requires at least 1 Light Radius on item\n\gold;Assur's Bane Upgrade	1	1	2		0	0	0									invbsc				thng		-1
+du11	\gold;Heroic Duncraig Crafting Scroll	\blue;Fire Resist -20%\n-2 to Light Radius\n+1% to maximum Fire, Poison, Cold Resistances\n\red;Requires at least 2 Light Radius on item\n\gold;Assur's Bane Upgrade	1	1	2		0	0	0									invbsc				thng		-1
+du12	\gold;Heroic Duncraig Crafting Scroll	\blue;Fire Resist -10%\n-1 to Light Radius\n+10% Spell Damage\n\red;Requires at least 1 Light Radius on item\n\gold;Assur's Bane Upgrade	1	1	2		0	0	0									invbsc				thng		-1
+du13	\gold;Heroic Duncraig Crafting Scroll	\blue;Fire Resist -20%\n\orange;1% Fire Spell Damage per 5 Spell Focus above the cap\n\red;Replaces Purify\n\gold;Assur's Bane Upgrade	1	1	2		0	0	0									invbsc				thng		-1
+du14	\gold;Heroic Duncraig Crafting Scroll	\blue;Fire Resist -20%\n\orange;1% Lightning Spell Damage per 5 Spell Focus above the cap\n\red;Replaces Purify\n\gold;Assur's Bane Upgrade	1	1	2		0	0	0									invbsc				thng		-1
+du15	\gold;Heroic Duncraig Crafting Scroll	\blue;Fire Resist -20%\n\orange;1% Cold Spell Damage per 5 Spell Focus above the cap\n\red;Replaces Purify\n\gold;Assur's Bane Upgrade	1	1	2		0	0	0									invbsc				thng		-1
+du16	\gold;Heroic Duncraig Crafting Scroll	\blue;Fire Resist -20%\n\orange;1% Poison Spell Damage per 5 Spell Focus above the cap\n\red;Replaces Purify\n\gold;Assur's Bane Upgrade	1	1	2		0	0	0									invbsc				thng		-1
+du17	\gold;Heroic Duncraig Crafting Scroll	\blue;Fire Resist -30%\n\dgrey;Energy: +12% Grit\nVitality: 400% of your Damage to Undead bonus added as Cold Damage to weapon\nDexterity: +300% Weapon Physical Damage\nStrength: +5000 Attack Rating\n\orange;Bonus based on your highest attribute if wielding a one handed weapon without a shield\n\red;Does not work for Barbarians\nReplaces Purify\n\gold;Assur's Bane Upgrade	1	1	2		0	0	0									invbsc				thng		-1
+du18	\gold;Heroic Duncraig Crafting Scroll	Use with Sacred Weapon/Armor\n\red;Does not work with corrupted items\n\orange;Sacred Unique (105) Creation	1	1	2		0	0	0									invbsc				thng		-1
+du19	\gold;Heroic Duncraig Crafting Scroll	Use With Sacred Unique (120) Weapon/Armor\n\red;Does not work with corrupted items\n\orange;Sacred Unique (120) Stat Reroll	1	1	2		0	0	0									invbsc				thng		-1
+du20	\gold;Heroic Duncraig Crafting Scroll	Use with Sacred Unique Weapon/Armor\n\red;Does not work with corrupted items\n\orange;Sacred Unique (105-130) Item Reroll	1	1	2		0	0	0									invbsc				thng		-1
+du21	\gold;Heroic Duncraig Crafting Scroll	(allows item to be corrupted once more)\nAny Corrupted Sacred Unique\n\red;Recipe cannot be repeated\n\orange;Sacred Unique Double Corruption	1	1	2		0	0	0									invbsc				thng		-1
 dy01	\orange;Mystic Dye	\blue;Color: White\n\grey;Right-click to set item color	1	1	2		0	0	0									dye-whit-1				thng		-1
 dy02	\orange;Mystic Dye	\blue;Color: Light Grey\n\grey;Right-click to set item color	1	1	2		0	0	0									dye-lgrey-2				thng		-1
 dy03	\orange;Mystic Dye	\blue;Color: Dark Grey\n\grey;Right-click to set item color	1	1	2		0	0	0									dye-dgrey-3				thng		-1
@@ -1919,7 +1943,7 @@ ir70	\grey;Quest Item\n\gold;Whisper of the Damned	Transmute three Whispers to r
 ir75	\grey;Quest Item\n\gold;Call of the Damned	\red;Works only on Hell difficulty\n\grey;Right click to answer the call of the Damned	1	1	2		120	0	0									invrsc				thng		-1
 ir76	Bone Chimes		1	2	2		120	0	0									bonechimes	255			grtz		-1
 ir80	\orange;Occult Effigy\nCraftsman's Brand	\blue;+18 Required Level\n\dgreen;Orb Effects Applied to this Item are Doubled\n\grey;Cube with Magic Quiver to Add Bonus\n\nCube Reagent	1	1	2		0	0	0									OccultOrb				thng		-1
-ir81	\orange;Occult Effigy\nCelestial Wind	\blue;+5 Required Level\nSet Movement Speed to 40%\n\grey;Cube with Boots to Add Bonus\n\nCube Reagent	1	1	2		0	0	0									OccultOrb				thng		-1
+ir81	\orange;Occult Effigy\nCelestial Wind	\blue;15% Faster Stamina Drain\nSet Movement Speed to 40%\n\grey;Cube with Boots to Add Bonus\n\nCube Reagent	1	1	2		0	0	0									OccultOrb				thng		-1
 ir82	\orange;Occult Effigy\nSigil of Absolution	\blue;Cannot be Used with Runewords\n(Max 2 Uses per Item)\nRequirements +25%\n-5 Required Level\n\grey;Cube with Any Weapon/Armor to Add Bonus\n\nCube Reagent	1	1	2		0	0	0									OccultOrb				thng		-1
 ir83	\orange;Occult Effigy\nPath of Brutality	\blue;+10 Required Level\nItem Becomes (Your Class Only)\nTransforms every +1 to All Skills to +3% Deadly Strike\n\grey;Cube with Unique Ring/Amulet to Add Bonus\n\nCube Reagent	1	1	2		0	0	0									OccultOrb				thng		-1
 ir84	\orange;Occult Effigy\nEmpyrean Touch	\blue;+10 Required Level\nItem Becomes Ethereal\n\grey;Cube with Any Weapon/Armor to Add Bonus\n\nCube Reagent	1	1	2		0	0	0									OccultOrb				thng		-1
@@ -2084,6 +2108,7 @@ r62	\grey;Elemental Rune\n\purple;Ice Rune		1	1	2		100	0	0									cold-rune				
 r98	\grey;Enchanted Rune\n\purple;Xis Rune	Can be Cubed with Low Rune	1	1	2		120	0	0									ultra-rune				xrun		-1
 r99	\grey;Primal Rune\n\purple;Runestone		1	1	2		0	0	0									BlankRune				thng,esse		-1
 r@r	\grey;Quest Item\n\gold;Ring of the Five	Cube All 5 Sigils with Ring of the Five\n	1	1	2		0	0	0									ring08				kill		-1
+rbar	\purple;Barrel of Rejuvenation	(Right Click to Collect)	1	1	2		0	0	0									invrRejuvBar				thng		-1
 rc01	\orange;El Container (01)	(Right Click to Collect)	1	1	2		0	0	0									invrElC				thng		-1
 rc02	\orange;Eld Container (02)	(Right Click to Collect)	1	1	2		0	0	0									invrEldC				thng		-1
 rc03	\orange;Tir Container (03)	(Right Click to Collect)	1	1	2		0	0	0									invrTirC				thng		-1
@@ -2321,7 +2346,7 @@ scu2	\grey;Cube Reagent\n\orange;Corrupted Shards (2)	90\nCreating Corrupted Cry
 scu3	\grey;Cube Reagent\n\orange;Corrupted Shards (3)	90\nCreating Corrupted Crystals:\n\n5 Corrupted Shards\n--> Corrupted Crystal\n	1	1	2		0	0	0									invsfary3				thng		-1
 scu4	\grey;Cube Reagent\n\orange;Corrupted Shards (4)	90\nCreating Corrupted Crystals:\n\n5 Corrupted Shards\n--> Corrupted Crystal\n	1	1	2		0	0	0									invsfary4				thng		-1
 scul	\grey;Cube Reagent\n\orange;Corrupted Shards (1)	90\nCreating Corrupted Crystals:\n\n5 Corrupted Shards\n--> Corrupted Crystal\n	1	1	2		0	0	0									invsfary1				scuu		-1
-scum	\grey;Cube Reagent\n\orange;Corrupted Crystal	25% Chance to add Nothing\n25% Chance to add +100 Required Level\n50% Chance to add Random Bonus Stat\n\nRing / Amulet\nSacred Runeword, or\nSacred/Angelic (Magical or higher) Item, or\n\red;Cube with Item to Corrupt\n	1	1	2		0	0	0									invfrag				thng		-1
+scum	\grey;Cube Reagent\n\orange;Corrupted Crystal	\grey;will be of sacrificed rune's element\n(if you happen to hit one)\ncorruption reveal step to guarantee that elemental mods\nCan add Fire/Ice/Light/Poison Rune from Teganze to the\n\n25% Chance to add Nothing\n25% Chance to add +100 Required Level\n50% Chance to add Random Bonus Stat\n\nRing / Amulet\nSacred Runeword, or\nSacred/Angelic (Magical or higher) Item, or\n\red;Cube with Item to Corrupt\n	1	1	2		0	0	0									invfrag				thng		-1
 scz	Scalp		1	1	2		0	0	0									invscp				body		-1
 senn	unused	Cube Class Charm with a Jewel to Add Bonus\n\yellow;Reward\n\n\grey;Find your Class Charm at level 80 or lower\n\yellow;Challenge\n\n\grey;Kurast 3000 BA (Torajan Jungles - Kurast Docks)\n\yellow;Location\n\n\grey;Normal\n\yellow;Difficulty\n	1	1	2		0	0	0									ChallengeScroll				thng		-1
 sic1	\orange;Container of Knowledge	(Right Click to Collect)	1	1	2		0	0	0									invrSigC				thng		-1
@@ -2432,7 +2457,7 @@ zkx	\dgreen;Greater Signet of Gold	Right-click: Gold in Bank: %d	1	1	2		0	0	0			
 |bc	Cube Reagent\n\gold;Book of Cain	\blue;+5% to Experience Gained\n+10 to All Attributes\n+1 to All Skills\n\grey;Cube with Glorious Book of Median to Add Bonus\n	2	2	2		0	0	0									superbooffk				thng		-1
 |dc	Dragon Claw	80\nBremmtown Trophy Challenge\nRequirements:\nKill the Dark Star Dragon within 30 \nseconds of entering\nDo not die\n\nCube the Dragon Claw within the time limit\nGrants: \n+10% to Experience Gained\n	1	1	2		120	0	0									invhorn	255			grtz		-1
 |ds1	\orange;Conjuring Eye	Cube Reagent	1	1	2		0	0	0									invminieye				thng		-1
-|ds2	\orange;Reality Piercer	\red;Requires Standing within Tur Durla\n\grey;Cube with Dulra Aegis to enter the Frozen Sea\n\nCube Reagent	1	1	2		0	0	0									invscoseye				thng		-1
+|ds2	\orange;Reality Piercer	\red;Requires Standing within Tur Dulra\n\grey;Cube with Dulra Aegis to enter the Frozen Sea\n\nCube Reagent	1	1	2		0	0	0									invscoseye				thng		-1
 |du1	\orange;Dulra Fruit	\blue;25% Magic Find\nMaximum Life +5%\n+1 to All Skills\n\grey;Cube with Dulra Aegis to Add Bonus\n\nCube Reagent	1	1	2		0	0	0									invdulrafruit				thng		-1
 |dul	Dulra Aegis	75\nThis powerful artifact has a multitude of \nuses depending on which reagent it is \ncubed with. \n\nCertain perfect gems allow you to pick \nstats within a certain category.\n\nAegis + Perfect Gem -> Add/Roll Stat\n\nRuby = Class Skills\nEmerald = Speed\nSapphire = Enemy Resist\nTopaz = Attribute\nAmethyst = Resist\nDiamond = Max Resist\nSkull = Minion Stat\n\nAdditionally, this artifact can be used to \nsummon certain bosses, teleport you\nto locations and opening quest portals.\n	1	1	2		0	0	0									invdulra	255			grtz		-1
 |ld	Lylia's Curse		1	1	2		120	0	0									lyliascharm	255			grtz		-1

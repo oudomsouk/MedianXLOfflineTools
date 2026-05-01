@@ -45,7 +45,7 @@
 43	Telekinesis	-1	0	0	0	182
 44		-1				
 45		-1				
-46	Flamefront	-1	2	1	3	92
+46	Flamefront	-1	2	3	1	92
 47		-1				
 48	Nova	-1	2	3	1	24
 49		-1				
@@ -53,7 +53,7 @@
 51		-1				
 52		-1				
 53		-1				
-54		-1				
+54	Flamefront	-1	2	3	1	92
 55		-1				
 56		-1				
 57		-1				
@@ -118,7 +118,7 @@
 116		-1				
 117		-1				
 118		-1				
-119	Flamefront	-1	2	1	3	92
+119	Flamefront	-1	2	3	1	92
 120		-1				
 121		-1				
 122		-1				
@@ -126,15 +126,15 @@
 124		-1				
 125		-1				
 126		-1				
-127	Flamefront	-1	2	1	3	92
+127		-1				
 128		-1				
 129		-1				
 130		-1				
 131		-1				
-132		-1				
+132	Iron Golem	-1	2	4	2	164
 133		-1				
-134	Lava Pit	-1	6	2	3	98
-135	Pestilence	-1	5	5	2	152
+134		-1				
+135		-1				
 136		-1				
 137		-1				
 138		-1				
@@ -211,7 +211,7 @@
 209		-1				
 210		-1				
 211		-1				
-212	Flamefront	-1	2	1	3	92
+212	Flamefront	-1	2	3	1	92
 213		-1				
 214		-1				
 215		-1				
@@ -255,7 +255,7 @@
 253		-1				
 254		-1				
 255		-1				
-256	Flamestrike	-1	2	5	3	34
+256	Flamestrike	-1	2	3	3	34
 257		-1				
 258		-1				
 259		-1				
@@ -409,9 +409,9 @@
 407		3				
 408		3				
 409		-1				
-410	Flamefront	1	2	1	3	92
-411	Flamestrike	1	2	5	3	34
-412	Pyroblast	1	2	3	3	98
+410	Flamefront	1	2	3	1	92
+411	Flamestrike	1	2	3	3	34
+412		1				
 413	Frigid Nova	1	4	1	1	40
 414		1				
 415		1				
@@ -445,7 +445,7 @@
 443	Squall Wave	-1	0	0	0	214
 444	Fowl Fight	-1	0	0	0	181
 445	Powder Keg	-1	0	0	0	208
-446	Cone of Cold	-1	0	0	0	178
+446	Cone of Cold	-1	0	0	0	302
 447	ATMG Sentry	-1	0	0	0	109
 448	Punisher Barrage	-1	0	0	0	0
 449	Spiral Dance	-1	0	0	0	93
@@ -456,7 +456,7 @@
 454	Flash	-1	0	0	0	62
 455	Rune of Fire	-1	0	0	0	70
 456	Death Star	-1	0	0	0	0
-457	Ice Bolt Nova	-1	0	0	0	195
+457	Ice Bolt Nova	-1	0	0	0	301
 458		-1				
 459	Apocalypse	-1	0	0	0	35
 460		-1				
@@ -468,7 +468,7 @@
 466	Frozen Crown	-1	0	0	0	85
 467	Lightning Streak	-1	0	0	0	116
 468	Nightmare	-1	0	0	0	103
-469	Vanquish	-1	0	0	0	75
+469	Vanquish	-1	0	0	0	299
 470	Ignis Fatuus	-1	0	0	0	282
 471	Shadow Blade	-1	0	0	0	73
 472	Dark Power	-1	0	0	0	57
@@ -509,7 +509,7 @@
 507	Deathstrike	-1	0	0	0	61
 508	Bladestorm	-1	0	0	0	95
 509	Shatter the Flesh	-1	0	0	0	100
-510	Singularity	-1	0	0	0	0
+510	Singularity	-1	0	0	0	300
 511	Flametail Shot	-1	0	0	0	92
 512	Bloodstorm	-1	0	0	0	282
 513	Balefire	-1	0	0	0	281
@@ -520,12 +520,12 @@
 518	Heaven's fury	-1	0	0	0	201
 519	Serafiend Prison	-1	0	0	0	291
 520	Ignis Mortem	-1	0	0	0	292
-521	Lava Pit	-1	6	2	3	98
-522		-1				
-523		-1				
-524		-1				
+521		-1				
+522	Pyroblast	-1	0	0	0	98
+523	Flamefront	-1	2	3	1	92
+524	Flamestrike	-1	2	3	3	34
 525		-1				
-526		-1				
+526	\tan;Brace for Impact	-1	0	0	0	296
 527		-1				
 528		-1				
 529		-1				
@@ -577,7 +577,7 @@
 575	Blade Spirits	-1	6	4	3	156
 576	Blizzard	-1	0	0	0	148
 577	Charged Strike	-1	0	0	0	247
-578	Singularity	-1	0	0	0	0
+578	Singularity	-1	0	0	0	300
 579	Life Spark	-1	0	0	0	0
 580	Punisher Bolt	-1	0	0	0	69
 581	Rotting Flesh	-1	0	0	0	0
@@ -615,7 +615,7 @@
 613		-1				
 614		-1				
 615		-1				
-616	Fire Cannonade	-1	0	0	0	0
+616	Fire Cannonade	-1	0	0	0	297
 617	Fire Bolt Nova	-1	0	0	0	219
 618	Detonate	-1	0	0	0	21
 619	Mythal	-1	8	1	1	138
@@ -632,15 +632,15 @@
 630	Pentagram	-1	0	0	0	186
 631	Phalanx	-1	2	5	1	34
 632	Broadside	-1	2	5	2	68
-633	APF-20 'Maelstrom' MkI	-1	2	3	2	66
+633	APF-20 'Maelstrom' MkV	-1	2	3	1	66
 634	Vampiric Icon	-1	8	1	3	88
 635	Psionic Scream	-1	6	2	3	54
 636	Rend	-1	2	1	2	120
 637	Ward of Fate	-1	1	4	2	76
 638	Rust Storm	-1	0	0	0	0
 639	Vindicate	-1	0	0	0	17
-640	Vanquish	-1	0	0	0	75
-641	Flamefront	-1	2	1	3	92
+640	Vanquish	-1	0	0	0	299
+641	Flamefront	-1	2	3	1	92
 642	Life Spark	-1	0	0	0	0
 643	Life Spark	-1	0	0	0	0
 644		-1				
@@ -648,7 +648,7 @@
 646		-1				
 647	Stormclash	-1	0	0	0	204
 648	Stormclash	-1	0	0	0	204
-649	Pyroblast	-1	2	3	3	98
+649	Pyroblast	-1	0	0	0	98
 650	Cherubim	-1	0	0	0	190
 651	Slayer	-1	6	4	2	66
 652	Thunderstorm	-1	4	4	1	60
@@ -672,12 +672,12 @@
 670	Visions of the Past	-1	0	0	0	293
 671		-1				
 672		-1				
-673		-1				
+673	Collateral Damage	-1	0	0	0	164
 674		-1				
-675		-1				
+675	Chaotic Spark	-1	0	0	0	225
 676		-1				
-677		-1				
-678		-1				
+677	Cursebreaker	-1	0	0	0	0
+678	Earthquake	-1	2	1	3	38
 679		-1				
 680		-1				
 681		-1				
@@ -766,7 +766,7 @@
 764		-1				
 765		-1				
 766		-1				
-767	Judgment Day	-1	0	0	0	0
+767	Judgement Day	-1	0	0	0	298
 768		-1				
 769		-1				
 770		-1				
@@ -946,10 +946,10 @@
 944	Guard Tower	-1	0	0	0	37
 945	Doom	-1	8	3	1	38
 946		-1				
-947		-1				
+947	Guard Tower	-1	0	0	0	37
 948		-1				
-949		-1				
-950		-1				
+949	Balefire	-1	0	0	0	281
+950	Balefire	-1	0	0	0	281
 951		-1				
 952		-1				
 953		-1				
@@ -1119,10 +1119,10 @@
 1117	Laserblade	6	4	2	1	120
 1118		-1				
 1119	Shadow Refuge	6	1	3	2	42
-1120	Storm Crows	6	2	1	2	62
-1121	APF-20 'Maelstrom' MkI	6	2	3	2	66
+1120	Storm Crows	6	2	1	1	62
+1121	APF-20 'Maelstrom' MkV	6	2	3	1	66
 1122	Broadside	6	2	5	2	68
-1123	Wychwind	6	2	4	1	64
+1123	Black Wind	6	2	6	1	176
 1124	Subterfuge	6	5	1	2	138
 1125	Incineration Trap	6	5	3	2	112
 1126		-1				
@@ -1154,7 +1154,7 @@
 1152	\orange;Winged Calamity	6	3	5	3	170
 1153	\orange;Execution	6	4	6	1	144
 1154	\orange;Momentum	6	4	6	3	142
-1155	\orange;Void Gazer	6	2	6	1	168
+1155	\orange;Void Gazer	6	2	6	3	168
 1156	Lethal Incision	6	2	4	3	160
 1157	\orange;Negative Charge	6	5	4	1	162
 1158	\orange;Enhanced Contraption	6	5	4	3	154
@@ -1162,8 +1162,8 @@
 1160	Cognition	6	6	3	2	152
 1161		6				
 1162	\orange;Energize	6	6	5	2	172
-1163		6				
-1164		6				
+1163	Pneumatic Burst	6	2	1	2	175
+1164	Ring of Steel	6	2	3	2	174
 1165		6				
 1166		6				
 1167		6				
@@ -1483,7 +1483,7 @@
 1481	Solar Flare	3	3	2	3	130
 1482	Dragon Jaws	3	3	1	1	104
 1483	Scion	3	3	3	3	154
-1484	Flamestrike	-1	2	5	3	34
+1484	Flamestrike	-1	2	3	3	34
 1485		-1				
 1486	Vessel of Retribution	3	4	1	1	120
 1487	\orange;Solstice and Equinox	3	4	2	1	74
@@ -1596,10 +1596,10 @@
 1594	\orange;Eye of the Storm	1	3	3	1	54
 1595	\orange;Mind Spark	1	3	5	3	58
 1596	\orange;Elucidation	1	5	3	3	78
-1597	\orange;Decay	1	5	2	1	72
+1597	\orange;Inoculation	1	5	2	1	170
 1598	Blight	1	5	6	2	66
-1599	\orange;Incineration	1	2	3	1	30
-1600	\orange;Pyre	1	2	5	1	32
+1599	\orange;Incineration	1	2	4	1	30
+1600	\orange;Pyre	1	2	4	3	164
 1601	\orange;Primordial Might	1	6	3	3	84
 1602	\orange;Cold Blooded	1	6	4	3	82
 1603	\orange;Premonition	1	6	6	3	86
@@ -1608,12 +1608,12 @@
 1606	Determination	1	6	3	1	162
 1607	Fatal Focus	1	6	4	1	80
 1608	\orange;Entanglement	1	3	6	1	36
-1609		1				
-1610		1				
-1611		1				
-1612		1				
+1609	Overheat	1	2	3	2	168
+1610	Molten Core	1	2	1	2	166
+1611	\orange;Decay	1	5	3	1	72
+1612	Warmth	1	2	1	1	100
 1613		1				
-1614		1				
+1614	Emberstep	1	2	1	3	130
 1615		1				
 1616		1				
 1617		1				
@@ -1628,8 +1628,8 @@
 1626	Endurance	1	7	4	2	12
 1627	Tenacity	1	7	4	1	14
 1628	Freedom	1	7	2	2	16
-1629	Paragon of Fate	1	9	5	1	18
-1630	Paragon of Sanctity	1	9	5	2	20
+1629	Paragon of Fate	1	9	6	1	18
+1630	Paragon of Sanctity	1	9	6	2	20
 1631		1				22
 1632		1				24
 1633		1				26
@@ -1650,7 +1650,7 @@
 1648	Noctule	-1	0	0	0	234
 1649	\tan;Rapid Wyrmshot	-1	0	0	0	236
 1650	Carnage	-1	0	0	0	237
-1651	\tan;Remorseless Winter	-1	0	0	0	0
+1651		-1				
 1652	Arcane Swarm	-1	0	0	0	16
 1653	Barrage	-1	0	0	0	238
 1654	Parasite	-1	0	0	0	239
@@ -1660,7 +1660,7 @@
 1658		-1				
 1659	\tan;Bear Claw Nova	-1	0	0	0	240
 1660	\tan;Ranged Blood Thorns	-1	0	0	0	241
-1661	Scepter Mastery	-1	0	0	0	0
+1661		-1				
 1662	APF-20 'Maelstrom' MkI	-1	0	0	0	243
 1663	Charged Strike	-1	0	0	0	247
 1664	Treewarden Form	-1	0	0	0	0
@@ -1732,7 +1732,7 @@
 1730	Golden Calf	-1	0	0	0	192
 1731	Call Treewarden	-1	0	0	0	54
 1732	Overpower	-1	0	0	0	40
-1733		-1				
+1733	Wychwind	-1	0	6	1	293
 1734	Exorcism	-1	0	0	0	134
 1735	Silver Dart	-1	0	0	0	121
 1736	Conquest	-1	0	0	0	144
@@ -1764,7 +1764,7 @@
 1762		-1				
 1763	Wraith Arrow	-1	0	0	0	77
 1764	SMG	-1	0	0	0	153
-1765	Amatoxin	-1	0	0	0	0
+1765	Amatoxin	-1	0	0	0	303
 1766	Path of Flames	-1	0	0	0	198
 1767	Body of the Savior	-1	0	0	0	129
 1768	Cold Fear	-1	0	0	0	56
@@ -1806,7 +1806,7 @@
 1804	\gold;Ranged Egg Trap	-1	0	0	0	279
 1805	Egg Trap	-1	4	5	2	116
 1806	Hurricane	-1	0	0	0	286
-1807		-1				
+1807	\tan;Coronation\blue;	-1	0	0	0	295
 1808		-1				
 1809	Stormblast	-1	0	0	0	60
 1810	Iceburst	-1	0	0	0	110
@@ -1826,7 +1826,7 @@
 1824		-1				
 1825	Mind Control	-1	0	0	0	165
 1826	Purify	-1	0	0	0	9
-1827	Fire Cannonade	-1	0	0	0	0
+1827	Fire Cannonade	-1	0	0	0	297
 1828		-1				
 1829		-1				
 1830		-1				
@@ -1836,7 +1836,7 @@
 1834		-1				
 1835		-1				
 1836		-1				
-1837	Fire Cannonade	-1	0	0	0	0
+1837	Fire Cannonade	-1	0	0	0	297
 1838	Hellgate	-1	0	0	0	0
 1839		-1				
 1840		-1				
@@ -2141,7 +2141,7 @@
 2139		-1				
 2140		-1				
 2141		-1				
-2142		-1				
+2142	Doom	-1	8	3	1	38
 2143		-1				
 2144		-1				
 2145		-1				
@@ -2163,7 +2163,7 @@
 2161		-1				
 2162		-1				
 2163		-1				
-2164	Flamefront	-1	2	1	3	92
+2164	Flamefront	-1	2	3	1	92
 2165		-1				
 2166		-1				
 2167		-1				
@@ -2239,7 +2239,7 @@
 2237		-1				
 2238		-1				
 2239		-1				
-2240	Flamefront	-1	2	1	3	92
+2240	Flamefront	-1	2	3	1	92
 2241		-1				
 2242		-1				
 2243		-1				
@@ -2331,7 +2331,7 @@
 2329		-1				
 2330		-1				
 2331		-1				
-2332	Flamefront	-1	2	1	3	92
+2332	Flamefront	-1	2	3	1	92
 2333		-1				
 2334		-1				
 2335		-1				
@@ -2432,7 +2432,7 @@
 2430		-1				
 2431		-1				
 2432		-1				
-2433	Flamefront	-1	2	1	3	92
+2433	Flamefront	-1	2	3	1	92
 2434		-1				
 2435		-1				
 2436		-1				
@@ -2440,7 +2440,7 @@
 2438		-1				
 2439		-1				
 2440		-1				
-2441	Flamefront	-1	2	1	3	92
+2441	Flamefront	-1	2	3	1	92
 2442		-1				
 2443		-1				
 2444		-1				
@@ -2452,7 +2452,7 @@
 2450		-1				
 2451		-1				
 2452		-1				
-2453	Flamefront	-1	2	1	3	92
+2453	Flamefront	-1	2	3	1	92
 2454		-1				
 2455		-1				
 2456		-1				
@@ -2544,7 +2544,7 @@
 2542		-1				
 2543		-1				
 2544		-1				
-2545	Flamefront	-1	2	1	3	92
+2545	Flamefront	-1	2	3	1	92
 2546		-1				
 2547		-1				
 2548		-1				
@@ -2625,7 +2625,7 @@
 2623	Phalanx	-1	2	5	1	34
 2624	Barrage	-1	2	2	3	116
 2625	Pounce	-1	4	5	3	100
-2626	Flamestrike	-1	2	5	3	34
+2626	Flamestrike	-1	2	3	3	34
 2627	Thunder Slam	-1	2	2	2	34
 2628	Snake Bite	-1	5	2	1	70
 2629	Rend	-1	2	1	2	120
@@ -2651,7 +2651,7 @@
 2649	Graveyard	-1	0	0	0	98
 2650	Supernova	-1	0	0	0	38
 2651	Cataclysm	-1	0	0	0	35
-2652	Ice Bolt Nova	-1	0	0	0	195
+2652	Ice Bolt Nova	-1	0	0	0	301
 2653	Razor Spines	-1	0	0	0	119
 2654	Wyrd	-1	0	0	0	206
 2655	Knife Throw	-1	0	0	0	0
@@ -2662,7 +2662,7 @@
 2660	Clobber	-1	0	0	0	143
 2661	Guard Tower	-1	0	0	0	37
 2662	Frozen Soul	-1	0	0	0	63
-2663	Flamefront	-1	2	1	3	92
+2663	Flamefront	-1	2	3	1	92
 2664	Phoenix Wave	-1	0	0	0	169
 2665	Avalanche	-1	0	0	0	140
 2666	Ring of Light	-1	0	0	0	43
@@ -2743,7 +2743,7 @@
 2741		-1				
 2742		-1				
 2743	Thunderstone	-1	3	2	1	52
-2744	Flamefront	-1	2	1	3	92
+2744	Flamefront	-1	2	3	1	92
 2745	Frozen Breath	-1	0	0	0	0
 2746		-1				
 2747	Thunderstone	-1	3	2	1	52
@@ -2849,7 +2849,7 @@
 2847	Void Armor	-1	0	0	0	108
 2848		-1				
 2849	Frigid Domain	-1	6	5	3	134
-2850	Flamefront	-1	2	1	3	92
+2850	Flamefront	-1	2	3	1	92
 2851		-1				
 2852	Unseelie Curse	-1	0	0	0	0
 2853		-1				
@@ -2866,9 +2866,9 @@
 2864	Thunderstone	-1	3	2	1	52
 2865		-1				
 2866		-1				
-2867	Singularity	-1	0	0	0	0
+2867	Singularity	-1	0	0	0	300
 2868		-1				
-2869	Flamefront	-1	2	1	3	92
+2869	Flamefront	-1	2	3	1	92
 2870	Disintegrate	-1	0	0	0	132
 2871		-1				
 2872		-1				
@@ -2890,17 +2890,17 @@
 2888		-1				
 2889		-1				
 2890		-1				
-2891	\red;LET ME SOLO HIM	-1	0	0	0	290
+2891	\gold;The Last Warchief	-1	0	0	0	290
 2892		-1				
 2893		-1				
 2894		-1				
 2895		-1				
 2896		-1				
 2897		-1				
-2898	Flamefront	-1	2	1	3	92
+2898	Flamefront	-1	2	3	1	92
 2899	Thunderstone	-1	3	2	1	52
-2900	Queen of Blades	-1	1	5	2	34
-2901	Flamefront	-1	2	1	3	92
+2900		-1				
+2901	Flamefront	-1	2	3	1	92
 2902		-1				
 2903	Impale	-1	3	1	2	46
 2904		-1				
@@ -2937,7 +2937,7 @@
 2935		-1				
 2936		-1				
 2937		-1				
-2938	Flamefront	-1	2	1	3	92
+2938	Flamefront	-1	2	3	1	92
 2939	Fortress	-1	5	6	1	64
 2940		-1				
 2941		-1				
@@ -2955,7 +2955,7 @@
 2953		-1				
 2954		-1				
 2955		-1				
-2956		-1				
+2956	Fortress	-1	5	6	1	64
 2957		-1				
 2958		-1				
 2959		-1				
@@ -2967,3 +2967,46 @@
 2965		-1				
 2966		-1				
 2967		-1				
+2968		-1				
+2969		-1				
+2970		-1				
+2971		-1				
+2972		-1				
+2973		-1				
+2974		-1				
+2975		-1				
+2976		-1				
+2977		-1				
+2978		-1				
+2979		-1				
+2980		-1				
+2981		-1				
+2982		-1				
+2983		-1				
+2984		-1				
+2985		-1				
+2986	Heaven's fury	-1	0	0	0	201
+2987		-1				
+2988		-1				
+2989		-1				
+2990		-1				
+2991		-1				
+2992		-1				
+2993		-1				
+2994		-1				
+2995		-1				
+2996		-1				
+2997		-1				
+2998		-1				
+2999		-1				
+3000		-1				
+3001		-1				
+3002		-1				
+3003		-1				
+3004		-1				
+3005		-1				
+3006		-1				
+3007		-1				
+3008		-1				
+3009		-1				
+3010		-1				
