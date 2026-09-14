@@ -3,22 +3,14 @@
 #include "colorsmanager.h"
 #include "qd2charrenamer.h"
 #include "helpers.h"
-#include "itemsviewerdialog.h"
 #include "itemdatabase.h"
-#include "propertiesviewerwidget.h"
-#include "finditemsdialog.h"
 #include "resourcepathmanager.hpp"
-#include "reversebitwriter.h"
-#include "itemparser.h"
 #include "reversebitreader.h"
-#include "itemspropertiessplitter.h"
 #include "characterinfo.hpp"
 #include "fileassociationmanager.h"
 #include "messagecheckbox.h"
 #include "experienceindicatorgroupbox.h"
 #include "skilltreedialog.h"
-#include "allstatsdialog.h"
-#include "dupescandialog.h"
 
 #include <QCloseEvent>
 #include <QDropEvent>
@@ -28,6 +20,8 @@
 #include <QLabel>
 #include <QMimeData>
 #include <QTextEdit>
+#include <QActionGroup>
+#include <QRegularExpression>
 
 #include <QSettings>
 #include <QFile>
@@ -68,7 +62,12 @@
 #ifdef Q_OS_MAC
 #include <QTextCodec>
 
+#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
+// qt_mac_set_dock_menu() is a private Qt5-only symbol; it was removed in Qt6, so this is a no-op there
+static inline void qt_mac_set_dock_menu(QMenu *) {}
+#else
 extern void qt_mac_set_dock_menu(QMenu *);
+#endif
 #endif
 
 //#define MAKE_HC
@@ -107,7 +106,7 @@ static bool isVersionLess(const QString &v1, const QString &v2)
 // static const
 
 static const QString kLastSavePathKey("lastSavePath"), kBackupExtension("bak"), kReadonlyCss("QLineEdit { background-color: rgb(227, 227, 227) }"), kTimeFormatReadable("yyyyMMdd-hhmmss"), kMedianXlServer("http://mxl.vn.cz/kambala/");
-static const QByteArray kMercHeader("jf"), kSkillsHeader("if"), kIronGolemHeader("kf");
+static const QByteArray kItemHeader("JM"), kMercHeader("jf"), kSkillsHeader("if"), kIronGolemHeader("kf");
 
 const QString MedianXLOfflineTools::kCompoundFormat("%1, %2");
 const QString MedianXLOfflineTools::kCharacterExtension("d2s");
@@ -122,16 +121,15 @@ const int MedianXLOfflineTools::kMaxRecentFiles = 15;
 
 // ctor
 
-MedianXLOfflineTools::MedianXLOfflineTools(const QString &cmdPath, LaunchMode launchMode, QWidget *parent, Qt::WindowFlags flags) : QMainWindow(parent, flags), ui(new Ui::MedianXLOfflineToolsClass), _findItemsDialog(0),
-    _backupLimitsGroup(new QActionGroup(this)), _showDisenchantPreviewGroup(new QActionGroup(this)), _isLoaded(false), kHackerDetected(tr("1337 hacker detected! Please, play legit.")),
+MedianXLOfflineTools::MedianXLOfflineTools(const QString &cmdPath, LaunchMode launchMode, QWidget *parent, Qt::WindowFlags flags) : QMainWindow(parent, flags), ui(new Ui::MedianXLOfflineToolsClass),
+    _backupLimitsGroup(new QActionGroup(this)), _isLoaded(false), kHackerDetected(tr("1337 hacker detected! Please, play legit.")),
     maxValueFormat(tr("Max: %1")), minValueFormat(tr("Min: %1")), investedValueFormat(tr("Invested: %1")),
     kForumThreadHtmlLinks(QString("<a href=\"https://forum.median-xl.com/viewtopic.php?f=40&t=342\">%1</a><br><a href=\"http://worldofplayers.ru/threads/34489/\">%2</a>").arg(tr("Official Median XL Forum thread"), tr("Official Russian Median XL Forum thread"))),
     _fsWatcher(new QFileSystemWatcher(this)), _fileChangeTimer(0), _isFileChangedMessageBoxRunning(false)
 {
-    ui->setupUi(this);
+    Q_UNUSED(launchMode);
 
-    ui->actionFindNext->setShortcut(QKeySequence::FindNext);
-    ui->actionFindPrevious->setShortcut(QKeySequence::FindPrevious);
+    ui->setupUi(this);
 
     ui->actionBackups1->setData(1);
     ui->actionBackups2->setData(2);
@@ -152,15 +150,6 @@ MedianXLOfflineTools::MedianXLOfflineTools(const QString &cmdPath, LaunchMode la
     backupFormatsGroup->setExclusive(true);
     backupFormatsGroup->addAction(ui->actionBackupFormatReadable);
     backupFormatsGroup->addAction(ui->actionBackupFormatTimestamp);
-
-    ui->actionPreviewDisenchantAlways->setData(0);
-    ui->actionPreviewDisenchantForSinglePage->setData(1);
-    ui->actionPreviewDisenchantNever->setData(2);
-
-    _showDisenchantPreviewGroup->setExclusive(true);
-    _showDisenchantPreviewGroup->addAction(ui->actionPreviewDisenchantAlways);
-    _showDisenchantPreviewGroup->addAction(ui->actionPreviewDisenchantForSinglePage);
-    _showDisenchantPreviewGroup->addAction(ui->actionPreviewDisenchantNever);
 
     ui->statsTableWidget->setFocusPolicy(Qt::NoFocus);
 
@@ -232,9 +221,6 @@ MedianXLOfflineTools::MedianXLOfflineTools(const QString &cmdPath, LaunchMode la
     QTimer::singleShot(2000, this, SLOT(moveUpdateActionToAppleMenu())); // needs a slight delay to create menu
 #endif
 
-#ifndef DUPE_CHECK
-    Q_UNUSED(launchMode);
-
     if (!cmdPath.isEmpty())
         loadFile(cmdPath);
     else if (ui->actionLoadLastUsedCharacter->isChecked() && !_recentFilesList.isEmpty())
@@ -253,71 +239,6 @@ MedianXLOfflineTools::MedianXLOfflineTools(const QString &cmdPath, LaunchMode la
 #endif
         updateWindowTitle();
     }
-#else
-    Q_UNUSED(cmdPath);
-    shouldShowWindow = true;
-
-    QAction *dupeCheckAction = new QAction("Dupe Check", this);
-    dupeCheckAction->setShortcut(QKeySequence("Ctrl+D"));
-    connect(dupeCheckAction, SIGNAL(triggered()), SLOT(showDupeCheck()));
-    ui->menuFile->insertAction(ui->actionSaveCharacter, dupeCheckAction);
-
-    QAction *dumpItemsAction = new QAction("Dump Items", this);
-    dumpItemsAction->setShortcut(QKeySequence("Ctrl+Alt+D"));
-    dumpItemsAction->setData(true);
-    connect(dumpItemsAction, SIGNAL(triggered()), SLOT(showDupeCheck()));
-    ui->menuFile->insertAction(ui->actionSaveCharacter, dumpItemsAction);
-
-    if (launchMode != LaunchModeNormal)
-        QTimer::singleShot(0, launchMode == LaunchModeDumpItems ? dumpItemsAction : dupeCheckAction, SLOT(trigger()));
-    else
-    {
-        // [-hc2sc | -sc2hc] [-toladder | -fromladder] charPath
-        QStringList args = qApp->arguments();
-        QString charPath = args.last();
-        if (!QFile::exists(charPath))
-            return;
-
-        bool hc2sc = false, sc2hc = false, *pToLadder = 0;
-        for (int i = 1; i < args.size() - 1; ++i)
-        {
-            QString arg = args.at(i);
-            if (arg == QLatin1String("-hc2sc"))
-                hc2sc = true;
-            else if (arg == QLatin1String("-sc2hc"))
-                sc2hc = true;
-            else if (arg == QLatin1String("-toladder"))
-            {
-                delete pToLadder;
-                pToLadder = new bool(true);
-            }
-            else if (arg == QLatin1String("-fromladder"))
-            {
-                delete pToLadder;
-                pToLadder = new bool(false);
-            }
-            else
-                qDebug("unknown arg %s", qPrintable(arg));
-        }
-        if (!hc2sc && !sc2hc && !pToLadder)
-            return;
-
-        _charPath = charPath;
-        if (processSaveFile())
-        {
-            if (hc2sc)
-                CharacterInfo::instance().basicInfo.isHardcore = false;
-            if (sc2hc)
-                CharacterInfo::instance().basicInfo.isHardcore = true;
-            if (pToLadder)
-                CharacterInfo::instance().basicInfo.isLadder = *pToLadder;
-            saveCharacter();
-
-            shouldShowWindow = false;
-            QTimer::singleShot(0, qApp, SLOT(quit()));
-        }
-    }
-#endif
 }
 
 MedianXLOfflineTools::~MedianXLOfflineTools()
@@ -330,6 +251,8 @@ MedianXLOfflineTools::~MedianXLOfflineTools()
 
 bool MedianXLOfflineTools::loadFile(const QString &charPath, bool shouldCheckExtension /*= true*/, bool shouldOpenItemsWindow /*= true*/)
 {
+    Q_UNUSED(shouldOpenItemsWindow);
+
     bool unsupportedFile = !charPath.endsWith(kCharacterExtensionWithDot);
     if (charPath.isEmpty() || (shouldCheckExtension && unsupportedFile) || !maybeSave())
     {
@@ -361,14 +284,6 @@ bool MedianXLOfflineTools::loadFile(const QString &charPath, bool shouldCheckExt
         connect(ui->mercTypeComboBox, SIGNAL(currentIndexChanged(int)), SLOT(modify()));
         connect(ui->mercNameComboBox, SIGNAL(currentIndexChanged(int)), SLOT(modify()));
 
-        if (_itemsDialog)
-        {
-            _itemsDialog->updateItems(getPlugyStashesExistenceHash(), true);
-            _itemsDialog->updateItemManagementButtonsState();
-        }
-        if (shouldOpenItemsWindow && (_itemsDialog || ui->actionOpenItemsAutomatically->isChecked()))
-            QTimer::singleShot(0, this, SLOT(showItems()));
-
         QSettings settings;
         settings.beginGroup("recentItems");
         settings.setValue(kLastSavePathKey, QDir::toNativeSeparators(QFileInfo(_charPath).canonicalPath()));
@@ -386,9 +301,6 @@ bool MedianXLOfflineTools::loadFile(const QString &charPath, bool shouldCheckExt
 #ifdef MAKE_FINISHED_CHARACTER
     ui->actionSaveCharacter->setEnabled(true);
 #endif
-
-    if (_findItemsDialog)
-        _findItemsDialog->clearResults();
 
     return result;
 }
@@ -418,36 +330,6 @@ void MedianXLOfflineTools::setModified(bool modified)
 {
     setWindowModified(modified);
     ui->actionSaveCharacter->setEnabled(modified);
-}
-
-void MedianXLOfflineTools::eatSignetsOfLearning(int signetsEaten)
-{
-    int newSignetsEaten = ui->signetsOfLearningEatenLineEdit->text().toInt() + signetsEaten;
-    ui->signetsOfLearningEatenLineEdit->setText(QString::number(newSignetsEaten));
-    CharacterInfo::instance().setValueForStatistic(newSignetsEaten, Enums::CharacterStats::SignetsOfLearningEaten);
-
-    foreach (QSpinBox *spinBox, _spinBoxesStatsMap)
-        spinBox->setMaximum(spinBox->maximum() + signetsEaten);
-
-    ui->freeStatPointsLineEdit->setText(QString::number(ui->freeStatPointsLineEdit->text().toInt() + signetsEaten));
-    QString s = ui->freeStatPointsLineEdit->statusTip();
-    int start = s.indexOf(": ") + 2, end = s.indexOf(","), total = s.mid(start, end - start).toInt();
-    updateMaxCompoundStatusTip(ui->freeStatPointsLineEdit, total + signetsEaten, investedStatPoints());
-}
-
-void MedianXLOfflineTools::updateFindResults()
-{
-    if (_findItemsDialog)
-        _findItemsDialog->sortAndUpdateSearchResult();
-}
-
-void MedianXLOfflineTools::dupeScanFinished()
-{
-    _saveFileContents.clear();
-    _charPath.clear();
-    clearUI();
-    updateWindowTitle();
-    qApp->alert(this);
 }
 
 void MedianXLOfflineTools::loadCharacter()
@@ -492,12 +374,11 @@ void MedianXLOfflineTools::saveCharacter()
         int diff = Enums::Offsets::StatsData + statsBytes.size() - charInfo.skillsOffset;
         charInfo.skillsOffset = Enums::Offsets::StatsData + statsBytes.size();
         charInfo.itemsOffset += diff;
-        charInfo.itemsEndOffset += diff;
     }
 
     if (ui->respecSkillsCheckBox->isChecked())
     {
-        int skills = charInfo.itemsOffset - ItemParser::kItemHeader.length() - charInfo.skillsOffset - kSkillsHeader.length();
+        int skills = charInfo.itemsOffset - kItemHeader.length() - charInfo.skillsOffset - kSkillsHeader.length();
         tempFileContents.replace(charInfo.skillsOffset + kSkillsHeader.length(), skills, QByteArray(skills, 0));
     }
 
@@ -633,71 +514,24 @@ void MedianXLOfflineTools::saveCharacter()
         }
     }
 
-    int characterItemsSize = 2, mercItemsSize = 0;
-    ItemsList characterItems, mercItems, ironGolemItems;
-    QHash<Enums::ItemStorage::ItemStorageEnum, ItemsList> plugyItemsHash;
-    foreach (ItemInfo *item, charInfo.items.character)
+    // when respeccing skills, drop the currently summoned Iron Golem item (if any), since the Golem skill will
+    // no longer be usable; item bytes are otherwise left completely untouched (opaque blob, not decoded)
+    if (ui->respecSkillsCheckBox->isChecked())
     {
-        if (isInExternalStorage(item))
-            plugyItemsHash[static_cast<Enums::ItemStorage::ItemStorageEnum>(item->storage)] += item;
-        else
+        int golemHeaderPos = -1, golemFlagPos, attempts = 0;
+        char golemFlag;
+        do
         {
-            int *pItemsSize = 0;
-            ItemsList *pItems = 0;
-            switch (item->location)
-            {
-            case Enums::ItemLocation::Merc:
-                pItemsSize = &mercItemsSize;
-                pItems = &mercItems;
-                item->location = Enums::ItemLocation::Equipped;
-                break;
-            case Enums::ItemLocation::IronGolem:
-                if (!ui->respecSkillsCheckBox->isChecked())
-                {
-                    pItems = &ironGolemItems;
-                    item->location = Enums::ItemLocation::Equipped;
-                }
-                break;
-            default:
-                pItemsSize = &characterItemsSize;
-                pItems = &characterItems;
-                break;
-            }
+            golemHeaderPos = tempFileContents.lastIndexOf(kIronGolemHeader, golemHeaderPos);
+            golemFlagPos = golemHeaderPos + kIronGolemHeader.length();
+            golemFlag = tempFileContents.at(golemFlagPos);
+        } while (!(++attempts == 3 || (!golemFlag && golemFlagPos == tempFileContents.size() - 1) || (golemFlag && tempFileContents.mid(golemFlagPos + 1, kItemHeader.length()) == kItemHeader)));
 
-            if (pItems)
-                pItems->append(item);
-            if (pItemsSize)
-            {
-                *pItemsSize += ItemParser::kItemHeader.length() + item->bitString.length() / 8;
-                foreach (ItemInfo *socketableItem, item->socketablesInfo)
-                    *pItemsSize += ItemParser::kItemHeader.length() + socketableItem->bitString.length() / 8;
-            }
+        if (golemHeaderPos != -1 && golemFlag)
+        {
+            tempFileContents[golemFlagPos] = 0;
+            tempFileContents.truncate(golemFlagPos + 1);
         }
-    }
-
-    // write character items
-    tempFileContents.replace(charInfo.itemsOffset, charInfo.itemsEndOffset - charInfo.itemsOffset, QByteArray(characterItemsSize, 0));
-    outputDataStream.device()->seek(charInfo.itemsOffset); //-V807
-    outputDataStream << static_cast<quint16>(characterItems.size());
-    ItemParser::writeItems(characterItems, outputDataStream);
-
-    // write merc items
-    outputDataStream.skipRawData(ItemParser::kItemHeader.length() + 2 + kMercHeader.length()); // JM + 0 corpses + merc header
-    if (charInfo.mercenary.exists)
-    {
-        writeByteArrayDataWithoutNull(outputDataStream, ItemParser::kItemHeader);
-        outputDataStream << static_cast<quint16>(mercItems.size());
-        int pos = outputDataStream.device()->pos();
-        tempFileContents.replace(pos, tempFileContents.indexOf(kIronGolemHeader, pos) - pos, QByteArray(mercItemsSize, 0));
-        ItemParser::writeItems(mercItems, outputDataStream);
-    }
-
-    // write possibly deleted golem item
-    if (ironGolemItems.isEmpty())
-    {
-        outputDataStream.skipRawData(kIronGolemHeader.length());
-        outputDataStream << static_cast<quint8>(0);
-        tempFileContents.truncate(outputDataStream.device()->pos());
     }
 
     // write file size & checksum
@@ -708,52 +542,7 @@ void MedianXLOfflineTools::saveCharacter()
 
     _fsWatcher->removePaths(_fsWatcher->files());
 
-    // save plugy stashes if changed
     QStringList backupedFiles;
-    for (QHash<Enums::ItemStorage::ItemStorageEnum, PlugyStashInfo>::iterator iter = _plugyStashesHash.begin(); iter != _plugyStashesHash.end(); ++iter)
-    {
-        const ItemsList &items = plugyItemsHash[iter.key()];
-        // if stash is empty, it must be re-saved anyway because all items could have been deleted
-        if (!items.isEmpty() && std::find_if(items.constBegin(), items.constEnd(), hasChanged) == items.constEnd())
-            continue;
-
-        PlugyStashInfo &info = iter.value();
-        QFile inputFile(info.path);
-        if (inputFile.exists())
-            backupedFiles += backupFile(inputFile);
-        else if (items.isEmpty())
-            continue;
-        else
-        {
-            // create
-            info.version = 1;
-            info.activePage = 0;
-        }
-        if (!inputFile.open(QIODevice::WriteOnly))
-        {
-            showErrorMessageBoxForFile(tr("Error creating file '%1'"), inputFile);
-            continue;
-        }
-
-        ItemsList::const_iterator maxPageIter = std::max_element(items.constBegin(), items.constEnd(), compareItemsByPlugyPage);
-        quint32 lastItemsPage = maxPageIter == items.constEnd() ? 1 : (*maxPageIter)->plugyPage;
-
-        QDataStream plugyFileDataStream(&inputFile);
-        plugyFileDataStream.setByteOrder(QDataStream::LittleEndian);
-        plugyFileDataStream << info.version;
-        plugyFileDataStream << info.activePage;
-
-        for (quint32 page = 1; page <= lastItemsPage; ++page)
-        {
-            writeByteArrayDataWithoutNull(plugyFileDataStream, ItemParser::kPlugyPageHeader);
-            plugyFileDataStream << page - 1;
-            writeByteArrayDataWithoutNull(plugyFileDataStream, ItemParser::kItemHeader);
-
-            ItemsList pageItems = ItemDataBase::extractItemsFromPage(items, page);
-            plugyFileDataStream << static_cast<quint16>(pageItems.size());
-            ItemParser::writeItems(pageItems, plugyFileDataStream);
-        }
-    }
 
     // save the character
     QString savePath, fileName, saveFileName;
@@ -795,7 +584,8 @@ void MedianXLOfflineTools::saveCharacter()
             if (hasNameChanged)
             {
                 // delete .d2s and rename all other related files like .d2x, .key, .ma0, etc.
-                bool isOldNameEmpty = QRegExp(QString("[ %1]+").arg(QChar(QChar::Nbsp))).exactMatch(charInfo.basicInfo.originalName);
+                QRegularExpression emptyNameRegex(QRegularExpression::anchoredPattern(QString("[ %1]+").arg(QChar(QChar::Nbsp))));
+                bool isOldNameEmpty = emptyNameRegex.match(charInfo.basicInfo.originalName).hasMatch();
                 bool hasNonAsciiChars = false;
                 for (int i = 0; i < charInfo.basicInfo.originalName.length(); ++i)
                 {
@@ -855,18 +645,6 @@ void MedianXLOfflineTools::saveCharacter()
 #ifdef DUPE_CHECK
 void MedianXLOfflineTools::showDupeCheck()
 {
-    if (_itemsDialog)
-        _itemsDialog->close();
-
-    bool isOpenItemsOptionChecked = ui->actionOpenItemsAutomatically->isChecked();
-    ui->actionOpenItemsAutomatically->setChecked(false);
-
-    _dupeScanDialog = new DupeScanDialog(_charPath, static_cast<QAction *>(sender())->data().toBool(), this);
-    connect(_dupeScanDialog, SIGNAL(loadFile(QString)), SLOT(loadFileSkipExtensionCheck(QString)), Qt::BlockingQueuedConnection);
-    connect(_dupeScanDialog, SIGNAL(scanFinished()), SLOT(dupeScanFinished()));
-    _dupeScanDialog->exec();
-
-    ui->actionOpenItemsAutomatically->setChecked(isOpenItemsOptionChecked);
 }
 #endif
 
@@ -1046,108 +824,6 @@ void MedianXLOfflineTools::convertToSoftcore(bool isSoftcore)
 {
     updateCharacterTitle(!isSoftcore);
     setModified(true);
-}
-
-void MedianXLOfflineTools::findItem()
-{
-    if (!_findItemsDialog)
-    {
-        _findItemsDialog = new FindItemsDialog(this);
-        connect(ui->actionFindNext, SIGNAL(triggered()), _findItemsDialog, SLOT(findNext()));
-        connect(ui->actionFindPrevious, SIGNAL(triggered()), _findItemsDialog, SLOT(findPrevious()));
-        connect(_findItemsDialog, SIGNAL(itemFound(ItemInfo *)), SLOT(showFoundItem(ItemInfo *)));
-    }
-    _findItemsDialog->show();
-    _findItemsDialog->activateWindow();
-}
-
-void MedianXLOfflineTools::showFoundItem(ItemInfo *item)
-{
-    ui->actionFindNext->setDisabled(!item);
-    ui->actionFindPrevious->setDisabled(!item);
-    if (item)
-    {
-        showItems(false);
-        _itemsDialog->showItem(item);
-    }
-}
-
-void MedianXLOfflineTools::showItems(bool activate /*= true*/)
-{
-    if (_itemsDialog)
-    {
-        if (_itemsDialog->isMinimized())
-            _itemsDialog->isMaximized() ? _itemsDialog->showMaximized() : _itemsDialog->showNormal(); // this is not a mistake: window can indeed be minimized and maximized at the same time
-        _itemsDialog->raise();
-        if (activate)
-            _itemsDialog->activateWindow();
-    }
-    else
-    {
-        _itemsDialog = new ItemsViewerDialog(getPlugyStashesExistenceHash(), _showDisenchantPreviewGroup->checkedAction()->data().toUInt(), this);
-        _itemsDialog->show();
-
-        connect(_itemsDialog->tabWidget(), SIGNAL(currentChanged(int)), SLOT(itemStorageTabChanged(int)));
-        connect(_itemsDialog, SIGNAL(cubeDeleted(bool)), ui->actionGiveCube, SLOT(setEnabled(bool)));
-        connect(_itemsDialog, SIGNAL(closing(bool)), ui->menuGoToPage, SLOT(setDisabled(bool)));
-        connect(_itemsDialog, SIGNAL(itemsChanged(bool)), SLOT(setModified(bool)));
-        connect(_itemsDialog, SIGNAL(signetsOfLearningEaten(int)), SLOT(eatSignetsOfLearning(int)));
-        connect(_itemsDialog, SIGNAL(stashSorted()), SLOT(updateFindResults()));
-        connect(_showDisenchantPreviewGroup, SIGNAL(triggered(QAction *)), _itemsDialog, SLOT(showDisenchantPreviewActionTriggered(QAction *)));
-    }
-
-    if (!activate)
-    {
-        _findItemsDialog->raise();
-        _findItemsDialog->activateWindow();
-    }
-}
-
-void MedianXLOfflineTools::itemStorageTabChanged(int tabIndex)
-{
-    bool isPlugyStorage = _itemsDialog->isPlugyStorageIndex(tabIndex);
-    ui->menuGoToPage->setEnabled(isPlugyStorage);
-
-    static const QList<QAction *> plugyNavigationActions = QList<QAction *>() << ui->actionPrevious10  << ui->actionPreviousPage << ui->actionNextPage << ui->actionNext10
-                                                                              << ui->actionPrevious100 << ui->actionFirstPage    << ui->actionLastPage << ui->actionNext100;
-    foreach (QAction *action, plugyNavigationActions)
-        action->disconnect();
-
-    if (isPlugyStorage)
-    {
-        static const QList<const char *> plugyNavigationSlots = QList<const char *>() << SLOT(previous10Pages())  << SLOT(previousPage()) << SLOT(nextPage()) << SLOT(next10Pages())
-                                                                                      << SLOT(previous100Pages()) << SLOT(firstPage())    << SLOT(lastPage()) << SLOT(next100Pages());
-        ItemsPropertiesSplitter *plugyTab = _itemsDialog->splitterAtIndex(tabIndex);
-        for (int i = 0; i < plugyNavigationActions.size(); ++i)
-            connect(plugyNavigationActions[i], SIGNAL(triggered()), plugyTab, plugyNavigationSlots[i]);
-    }
-}
-
-void MedianXLOfflineTools::giveCube()
-{
-    ItemInfo *cube = ItemDataBase::loadItemFromFile("cube");
-    if (!ItemDataBase::storeItemIn(cube, Enums::ItemStorage::Inventory, ItemsViewerDialog::rowsInStorageAtIndex(Enums::ItemStorage::Inventory), ItemsViewerDialog::colsInStorageAtIndex(Enums::ItemStorage::Inventory)))
-    {
-        ERROR_BOX(tr("You have no free space in inventory to store the Cube"));
-        delete cube;
-        return;
-    }
-
-    QHash<int, bool> plugyStashesExistenceHash = getPlugyStashesExistenceHash();
-    CharacterInfo::instance().items.character += cube;
-
-    if (_itemsDialog)
-        _itemsDialog->updateItems(plugyStashesExistenceHash, false);
-
-    ui->actionGiveCube->setDisabled(true);
-    setModified(true);
-    INFO_BOX(ItemParser::itemStorageAndCoordinatesString(tr("Cube has been stored in %1 at (%2,%3)"), cube));
-}
-
-void MedianXLOfflineTools::showAllStats()
-{
-    AllStatsDialog dlg(this);
-    dlg.exec();
 }
 
 void MedianXLOfflineTools::backupSettingTriggered(bool checked)
@@ -1483,7 +1159,6 @@ void MedianXLOfflineTools::createStatsGroupBoxLayout()
     QGridLayout *gridLayout = new QGridLayout(ui->statsGroupBox);
     gridLayout->addWidget(new QLabel(tr("Inventory Gold")), 0, 0, Qt::AlignRight);
     gridLayout->addWidget(ui->inventoryGoldLineEdit, 0, 1);
-    gridLayout->addWidget(ui->showAllStatsButton, 0, 2);
     gridLayout->addWidget(new QLabel(tr("Stash Gold")), 0, 3, Qt::AlignRight);
     gridLayout->addWidget(ui->stashGoldLineEdit, 0, 4);
 
@@ -1573,10 +1248,6 @@ void MedianXLOfflineTools::loadSettings()
     ui->actionLoadLastUsedCharacter->setChecked(settings.value("loadLastCharacter", true).toBool());
     ui->actionWarnWhenColoredName->setChecked(settings.value("warnWhenColoredName", true).toBool());
 
-    ui->actionOpenItemsAutomatically->setChecked(settings.value("openItemsAutomatically").toBool());
-    int i = settings.value("showDisenchantPreview", 0).toInt();
-    _showDisenchantPreviewGroup->actions().at(i >= 0 && i < _showDisenchantPreviewGroup->actions().size() ? i : 0)->setChecked(true);
-
     bool backupsEnabled = settings.value("makeBackups", true).toBool();
     ui->actionBackup->setChecked(backupsEnabled);
     ui->menuBackupsLimit->setEnabled(backupsEnabled);
@@ -1608,13 +1279,6 @@ void MedianXLOfflineTools::loadSettings()
     else
         ui->actionBackups5->setChecked(true);
 
-    ui->actionReloadSharedStashes->setChecked(settings.value("reloadSharedStashes").toBool());
-    settings.beginGroup("autoOpenSharedStashes");
-    ui->actionAutoOpenPersonalStash->setChecked(settings.value("personal", true).toBool());
-    ui->actionAutoOpenSharedStash->setChecked(settings.value("shared", true).toBool());
-    ui->actionAutoOpenHCShared->setChecked(settings.value("hcShared", true).toBool());
-    settings.endGroup();
-
     if (ui->actionCheckFileAssociations)
         ui->actionCheckFileAssociations->setChecked(settings.value("checkAssociations", true).toBool());
     ui->actionCheckForUpdateOnStart->setChecked(settings.value("checkUpdates", true).toBool());
@@ -1636,30 +1300,15 @@ void MedianXLOfflineTools::saveSettings() const
     settings.setValue("loadLastCharacter", ui->actionLoadLastUsedCharacter->isChecked());
     settings.setValue("warnWhenColoredName", ui->actionWarnWhenColoredName->isChecked());
 
-    settings.setValue("openItemsAutomatically", ui->actionOpenItemsAutomatically->isChecked());
-    settings.setValue("showDisenchantPreview", _showDisenchantPreviewGroup->checkedAction()->data().toUInt());
-
     settings.setValue("makeBackups", ui->actionBackup->isChecked());
     settings.setValue("backupFormatIsTimestamp", ui->actionBackupFormatTimestamp->isChecked());
     settings.setValue("backupLimit", _backupLimitsGroup->checkedAction()->data().toInt());
-
-    settings.setValue("reloadSharedStashes", ui->actionReloadSharedStashes->isChecked());
-    settings.beginGroup("autoOpenSharedStashes");
-    settings.setValue("personal", ui->actionAutoOpenPersonalStash->isChecked());
-    settings.setValue("shared", ui->actionAutoOpenSharedStash->isChecked());
-    settings.setValue("hcShared", ui->actionAutoOpenHCShared->isChecked());
-    settings.endGroup();
 
     if (ui->actionCheckFileAssociations)
         settings.setValue("checkAssociations", ui->actionCheckFileAssociations->isChecked());
     settings.setValue("checkUpdates", ui->actionCheckForUpdateOnStart->isChecked());
 
     settings.endGroup();
-
-    if (_findItemsDialog)
-        _findItemsDialog->saveSettings();
-    if (_itemsDialog)
-        _itemsDialog->saveSettings();
 }
 
 void MedianXLOfflineTools::fillMaps()
@@ -1685,13 +1334,6 @@ void MedianXLOfflineTools::connectSignals()
 
     // edit
     connect(ui->actionRename, SIGNAL(triggered()), SLOT(rename()));
-
-    // items
-    connect(ui->actionShowItems, SIGNAL(triggered()), SLOT(showItems()));
-    connect(ui->actionFind, SIGNAL(triggered()), SLOT(findItem()));
-    connect(ui->actionGiveCube, SIGNAL(triggered()), SLOT(giveCube()));
-
-    // export
 
     // options
     connect(ui->actionBackup, SIGNAL(triggered(bool)), SLOT(backupSettingTriggered(bool)));
@@ -1720,7 +1362,6 @@ void MedianXLOfflineTools::connectSignals()
     connect(ui->convertToSoftcoreCheckBox, SIGNAL(toggled(bool)), SLOT(convertToSoftcore(bool)));
 
     connect(ui->respecStatsButton, SIGNAL(clicked()), SLOT(respecStats()));
-    connect(ui->showAllStatsButton, SIGNAL(clicked()), SLOT(showAllStats()));
     connect(ui->respecSkillsCheckBox, SIGNAL(toggled(bool)), SLOT(respecSkills(bool)));
 
     connect(ui->activateWaypointsCheckBox, SIGNAL(toggled(bool)), SLOT(modify()));
@@ -1998,7 +1639,7 @@ bool MedianXLOfflineTools::processSaveFile()
     }
 
     // apparently "if" can occur multiple times before items section, so we need the last occurrence before skills data
-    int firstItemOffset = _saveFileContents.indexOf(ItemParser::kItemHeader, skillsOffset);
+    int firstItemOffset = _saveFileContents.indexOf(kItemHeader, skillsOffset);
     while (skillsOffset != -1 && skillsOffset < firstItemOffset)
     {
         charInfo.skillsOffset = skillsOffset;
@@ -2134,214 +1775,28 @@ bool MedianXLOfflineTools::processSaveFile()
     if (shouldShowHackWarning)
         showLoadingError(kHackerDetected);
 
-    // items
+    // items are intentionally left completely unparsed in this stripped-down build: everything from here to
+    // the end of the save file (character items, corpse marker, mercenary items, and the Iron Golem item, if
+    // any) is treated as one opaque blob and is preserved automatically, since only stats/skills are edited.
     int charItemsOffset = inputDataStream.device()->pos();
-    if (_saveFileContents.mid(charItemsOffset, ItemParser::kItemHeader.length()) != ItemParser::kItemHeader)
+    if (_saveFileContents.mid(charItemsOffset, kItemHeader.length()) != kItemHeader)
     {
         showLoadingError(tr("Items data not found!"));
         return false;
     }
-    charInfo.itemsOffset = charItemsOffset + ItemParser::kItemHeader.length();
-    inputDataStream.skipRawData(ItemParser::kItemHeader.length()); // pointing to the beginning of item data
-
-    quint16 charItemsTotal;
-    inputDataStream >> charItemsTotal;
-    ItemsList itemsBuffer;
-    QString corruptedItems = ItemParser::parseItemsToBuffer(charItemsTotal, inputDataStream, _saveFileContents, tr("Corrupted item detected in %1 at (%2,%3) in slot %4"), &itemsBuffer);
-#ifdef DUPE_CHECK
-    qDebug("%s", qPrintable(corruptedItems));
-#else
-    if (!corruptedItems.isEmpty())
-        ERROR_BOX(corruptedItems.trimmed());
-#endif
-    charInfo.itemsEndOffset = inputDataStream.device()->pos();
-    qDebug("items end offset %u", charInfo.itemsEndOffset);
-
-    // TODO: [later] calculate total stat values
-    //const QList<quint16> propKeys = QList<quint16>() << ItemProperties::Strength << ItemProperties::Dexterity << ItemProperties::Vitality << ItemProperties::Energy
-    //                                                 << ItemProperties::StrengthBonus << ItemProperties::DexterityBonus << ItemProperties::VitalityBonus << ItemProperties::EnergyBonus
-    //                                                 << ItemProperties::Life << ItemProperties::LifeBonus << ItemProperties::Mana << ItemProperties::ManaBonus
-    //                                                 << ItemProperties::Stamina << ItemProperties::Avoid1;
-    //QMap<quint16, qint32> propValues; // replace with QHash
-    //foreach (ItemInfo *item, itemsBuffer)
-    //    if (ItemDataBase::doesItemGrantBonus(item))
-    //        foreach (quint16 propKey, propKeys)
-    //            propValues[propKey] = getValueOfPropertyInItem(propKey, item);
-    //for (auto iter = propValues.constBegin(); iter != propValues.constEnd(); ++iter)
-    //    qDebug() << "property" << iter.key() << "value" << iter.value();
-    //qint32 strBonus = propValues.value(ItemProperties::StrengthBonus);
-    //qDebug() << "strength value is" << charInfo.valueOfStatistic(CharacterStats::Strength) * (strBonus ? strBonus : 1) + propValues.value(ItemProperties::Strength);
-
-#ifndef MAKE_FINISHED_CHARACTER
-    qint32 avoidValue = 0;//propValues.value(ItemProperties::Avoid1);
-    foreach (ItemInfo *item, itemsBuffer)
-        if (ItemDataBase::doesItemGrantBonus(item))
-            avoidValue += getValueOfPropertyInItem(item, ItemProperties::Avoid1);
-    if (avoidValue >= 100)
-    {
-        QString avoidText = tr("100% avoid is kewl");
-        if (avoidValue > 100)
-            avoidText += QString(" (%1)").arg(tr("well, you have %1% actually", "avoid").arg(avoidValue));
-        showLoadingError(avoidText, true);
-    }
-#endif
-
-    // corpse data
-    inputDataStream.skipRawData(ItemParser::kItemHeader.length() + 2); // JM + number of corpses (always 0 in Sigma)
-
-    // merc
-    if (_saveFileContents.mid(inputDataStream.device()->pos(), kMercHeader.length()) != kMercHeader)
-    {
-        showLoadingError(tr("Mercenary items section not found!"));
-        return false;
-    }
-    inputDataStream.skipRawData(kMercHeader.length());
-    if (charInfo.mercenary.exists)
-    {
-        inputDataStream.skipRawData(ItemParser::kItemHeader.length()); // JM
-
-        // find iron golem header
-        int golemHeaderPos = -1, golemFlagPos, attempts = 0;
-        char golemFlag;
-        do
-        {
-            golemHeaderPos = _saveFileContents.lastIndexOf(kIronGolemHeader, golemHeaderPos);
-            golemFlagPos = golemHeaderPos + kIronGolemHeader.length();
-            golemFlag = _saveFileContents.at(golemFlagPos);
-        } while (!(++attempts == 3 || (!golemFlag && golemFlagPos == _saveFileContents.size() - 1) || (golemFlag && _saveFileContents.mid(golemFlagPos + 1, ItemParser::kItemHeader.length()) == ItemParser::kItemHeader)));
-#if !IS_RELEASE_BUILD
-        Q_ASSERT(golemHeaderPos != -1);
-#endif
-
-        quint16 mercItemsTotal;
-        inputDataStream >> mercItemsTotal;
-        ItemsList mercItems;
-        ItemParser::parseItemsToBuffer(mercItemsTotal, inputDataStream, _saveFileContents.left(golemHeaderPos), tr("Corrupted item detected in %1 in slot %4"), &mercItems);
-        foreach (ItemInfo *item, mercItems)
-            item->location = ItemLocation::Merc;
-        itemsBuffer += mercItems;
-    }
-
-    // iron golem
-    if (_saveFileContents.mid(inputDataStream.device()->pos(), kIronGolemHeader.length()) != kIronGolemHeader)
-    {
-        showLoadingError(tr("Iron Golem items section not found!"));
-        return false;
-    }
-    inputDataStream.skipRawData(kIronGolemHeader.length());
-    if (_saveFileContents.mid(inputDataStream.device()->pos(), 1).at(0) > 0)
-    {
-        inputDataStream.skipRawData(1);
-        ItemsList golemItems;
-        ItemParser::parseItemsToBuffer(1, inputDataStream, _saveFileContents, tr("Corrupted item detected in %1 in slot %4"), &golemItems);
-        foreach (ItemInfo *item, golemItems)
-            item->location = ItemLocation::IronGolem;
-        itemsBuffer += golemItems;
-    }
-
-    bool sharedStashPathChanged1 = true, hcStashPathChanged1 = true;
-    bool sharedStashPathChanged2 = true, hcStashPathChanged2 = true;
-#ifdef DUPE_CHECK
-    if (!_dupeScanDialog)
-#endif
-    {
-        // parse plugy stashes
-        QString oldSharedStashPath1 = _plugyStashesHash[ItemStorage::SigmaSharedStash].path, oldHCStashPath1 = _plugyStashesHash[ItemStorage::SigmaHCStash].path;
-        QString oldSharedStashPath2 = _plugyStashesHash[ItemStorage::SharedStash].path, oldHCStashPath2 = _plugyStashesHash[ItemStorage::HCStash].path;
-        QFileInfo charPathFileInfo(_charPath);
-        QString charFolderPath = charPathFileInfo.absolutePath();
-        _plugyStashesHash[Enums::ItemStorage::PersonalStash].path = ui->actionAutoOpenPersonalStash->isChecked() ? QString("%1/%2.stash").arg(charFolderPath, charPathFileInfo.baseName()) : QString();
-        _plugyStashesHash[Enums::ItemStorage::SigmaSharedStash].path = ui->actionAutoOpenSharedStash->isChecked() ? charFolderPath + "/_sharedstash.shared" : QString();
-        _plugyStashesHash[Enums::ItemStorage::SigmaHCStash].path = ui->actionAutoOpenHCShared->isChecked() ? charFolderPath + "/_sharedstash.hc.shared" : QString();
-        _plugyStashesHash[Enums::ItemStorage::SharedStash].path = ui->actionAutoOpenSharedStash->isChecked() ? charFolderPath + "/_MXLOT.stash" : QString();
-        _plugyStashesHash[Enums::ItemStorage::HCStash].path = ui->actionAutoOpenHCShared->isChecked() ? charFolderPath + "/_MXLOT_HC.stash" : QString();
-        if (!ui->actionReloadSharedStashes->isChecked())
-        {
-            sharedStashPathChanged1 = oldSharedStashPath1 != _plugyStashesHash[ItemStorage::SigmaSharedStash].path;
-            sharedStashPathChanged2 = oldSharedStashPath2 != _plugyStashesHash[ItemStorage::SharedStash].path;
-
-            hcStashPathChanged1 = oldHCStashPath1 != _plugyStashesHash[ItemStorage::SigmaHCStash].path;
-            hcStashPathChanged2 = oldHCStashPath2 != _plugyStashesHash[ItemStorage::HCStash].path;
-        }
-
-        _sharedGold = 0;
-        for (QHash<ItemStorage::ItemStorageEnum, PlugyStashInfo>::iterator iter = _plugyStashesHash.begin(); iter != _plugyStashesHash.end(); ++iter)
-        {
-            switch (iter.key())
-            {
-            case ItemStorage::PersonalStash:
-                if (!(_plugyStashesHash[iter.key()].exists = ui->actionAutoOpenPersonalStash->isChecked()))
-                    continue;
-                break;
-            case ItemStorage::SigmaSharedStash:
-                if (!(_plugyStashesHash[iter.key()].exists = ui->actionAutoOpenSharedStash->isChecked()) || !sharedStashPathChanged1)
-                    continue;
-                break;
-            case ItemStorage::SigmaHCStash:
-                if (!(_plugyStashesHash[iter.key()].exists = ui->actionAutoOpenHCShared->isChecked()) || !hcStashPathChanged1)
-                    continue;
-                break;
-            case ItemStorage::SharedStash:
-                if (!(_plugyStashesHash[iter.key()].exists = ui->actionAutoOpenSharedStash->isChecked()) || !sharedStashPathChanged2)
-                    continue;
-                break;
-            case ItemStorage::HCStash:
-                if (!(_plugyStashesHash[iter.key()].exists = ui->actionAutoOpenHCShared->isChecked()) || !hcStashPathChanged2)
-                    continue;
-                break;
-            default:
-                break;
-            }
-            processPlugyStash(iter, &itemsBuffer);
-        }
-    }
-
-    clearItems(sharedStashPathChanged1, hcStashPathChanged1, sharedStashPathChanged2, hcStashPathChanged2);
-    charInfo.items.character += itemsBuffer;
+    charInfo.itemsOffset = charItemsOffset + kItemHeader.length();
 
     _fsWatcher->addPath(_charPath);
-
-    // create a lot of copies of all gems
-//    int p = 6;
-//    for (int i = 0; i < 100; ++i)
-//    {
-//        ItemInfo *rune = ItemDataBase::loadItemFromFile("runes/r10");
-//        foreach (const QByteArray &gemType, QList<QByteArray>() << "gcv" << "gfv" << "gsv" << "gzv" << "gpv" << "gcb" << "gfb" << "gsb" << "glb" << "gpb" << "gcg" << "gfg" << "gsg"
-//                 << "glg" << "gpg" << "gcr" << "gfr" << "gsr" << "glr" << "gpr" << "gcw" << "gfw" << "gsw" << "glw" << "gpw" << "gcy" << "gfy" << "gsy" << "gly" << "gpy" << "skc"
-//                 << "skf" << "sku" << "skl" << "skz" << "yo1" << "yo2" << "yo3" << "yo4" << "yo5" << "g$a" << "g$b" << "g$c" << "g$d" << "g$e" << "9$a" << "9$b" << "9$c" << "9$d"
-//                 << "9$e" << "7$a" << "7$b" << "7$c" << "7$d" << "7$e" << "5$a" << "5$b" << "5$c" << "5$d" << "5$e")
-//        {
-//            ItemInfo *gem = new ItemInfo(*rune);
-//            gem->itemType = gemType;
-//            for (int i = 0; i < 3; ++i)
-//                ReverseBitWriter::replaceValueInBitString(gem->bitString, ItemOffsets::Type + i*8, gemType.at(i));
-//            if (ItemDataBase::storeItemIn(gem, ItemStorage::PersonalStash, 10, p))
-//                charInfo.items.character += gem;
-//        }
-//        delete rune;
-//        ++p;
-//    }
 
     return true;
 }
 
 void MedianXLOfflineTools::showLoadingError(const QString &error, bool warn)
 {
-#ifdef DUPE_CHECK
-        if (_dupeScanDialog)
-        {
-            if (!warn)
-                clearItems();
-            _dupeScanDialog->logLoadingError(error, warn);
-        }
-        else
-#endif
-        {
-            if (warn)
-                WARNING_BOX(error);
-            else
-                ERROR_BOX(error);
-        }
+    if (warn)
+        WARNING_BOX(error);
+    else
+        ERROR_BOX(error);
 }
 
 quint32 MedianXLOfflineTools::checksum(const QByteArray &charByteArray) const
@@ -2396,66 +1851,6 @@ void MedianXLOfflineTools::recalculateStatPoints()
     CharacterInfo::instance().basicInfo.totalStatPoints = investedStatPoints() + ui->freeStatPointsLineEdit->text().toUInt();
 }
 
-void MedianXLOfflineTools::processPlugyStash(QHash<Enums::ItemStorage::ItemStorageEnum, PlugyStashInfo>::iterator &iter, ItemsList *items)
-{
-    PlugyStashInfo &info = iter.value();
-    QFile inputFile(info.path);
-    if (!(info.exists = inputFile.exists()))
-        return;
-    if (!(info.exists = inputFile.open(QIODevice::ReadOnly)))
-    {
-        showErrorMessageBoxForFile(tr("Error opening extended stash '%1'"), inputFile);
-        return;
-    }
-
-    QByteArray bytes = inputFile.readAll();
-    inputFile.close();
-
-    Enums::ItemStorage::ItemStorageEnum plugyStorage = iter.key();
-
-    QDataStream inputDataStream(bytes);
-    inputDataStream.setByteOrder(QDataStream::LittleEndian);
-    inputDataStream >> info.version;
-
-    QString corruptedItems;
-    inputDataStream >> info.activePage;
-    for (quint32 page = 1; !inputDataStream.atEnd(); ++page)
-    {
-        if (bytes.mid(inputDataStream.device()->pos(), ItemParser::kPlugyPageHeader.size()) != ItemParser::kPlugyPageHeader)
-        {
-            ERROR_BOX(tr("Page %1 of '%2' has wrong header").arg(page).arg(QFileInfo(info.path).fileName()));
-            return;
-        }
-        inputDataStream.skipRawData(ItemParser::kPlugyPageHeader.size());
-
-        quint32 pageID;
-        inputDataStream >> pageID;
-        //Q_ASSERT(page == pageID + 1);
-
-        if (bytes.mid(inputDataStream.device()->pos(), 2) != ItemParser::kItemHeader)
-        {
-            ERROR_BOX(tr("Page %1 of '%2' has wrong item header").arg(page).arg(QFileInfo(info.path).fileName()));
-            return;
-        }
-        inputDataStream.skipRawData(2);
-
-        quint16 itemsOnPage;
-        inputDataStream >> itemsOnPage;
-        ItemsList plugyItems;
-        corruptedItems += ItemParser::parseItemsToBuffer(itemsOnPage, inputDataStream, bytes, tr("Corrupted item detected in %1 on page %4 at (%2,%3)"), &plugyItems, page);
-        foreach (ItemInfo *item, plugyItems)
-        {
-            item->storage = plugyStorage;
-            item->plugyPage = page;
-        }
-        items->append(plugyItems);
-    }
-    if (!corruptedItems.isEmpty())
-        ERROR_BOX(corruptedItems.trimmed());
-
-    _fsWatcher->addPath(info.path);
-}
-
 void MedianXLOfflineTools::clearUI()
 {
     _isLoaded = false;
@@ -2493,7 +1888,6 @@ void MedianXLOfflineTools::clearUI()
     foreach (QCheckBox *checkbox, checkBoxes)
         checkbox->setChecked(false);
 
-    ui->showAllStatsButton->setChecked(false);
     ui->respecStatsButton->setChecked(false);
 
     QList<QGroupBox *> groupBoxes = QList<QGroupBox *>() << ui->characterGroupBox << ui->statsGroupBox << ui->waypointsGroupBox << ui->mercGroupBox << _questsGroupBox;
@@ -2501,8 +1895,7 @@ void MedianXLOfflineTools::clearUI()
         groupBox->setDisabled(true);
 
     QList<QAction *> actions = QList<QAction *>() << ui->actionReloadCharacter << ui->actionSaveCharacter << ui->actionRename << ui->actionRespecStats << ui->actionRespecSkills << ui->actionActivateWaypoints
-                                                  << ui->actionConvertToSoftcore << ui->actionResurrect << ui->actionFind << ui->actionFindNext << ui->actionFindPrevious
-                                                  << ui->actionShowItems << ui->actionShowAllStats << ui->actionSkillTree;
+                                                  << ui->actionConvertToSoftcore << ui->actionResurrect << ui->actionSkillTree;
     foreach (QAction *action, actions)
         action->setDisabled(true);
 
@@ -2531,7 +1924,7 @@ void MedianXLOfflineTools::updateUI()
     clearUI();
 
     QList<QAction *> actions = QList<QAction *>() << ui->actionReloadCharacter << ui->actionRename << ui->actionRespecStats << ui->actionRespecSkills << ui->actionActivateWaypoints
-                                                  << ui->actionShowAllStats << ui->actionSkillTree;
+                                                  << ui->actionSkillTree;
     foreach (QAction *action, actions)
         action->setEnabled(true);
     ui->respecSkillsCheckBox->setEnabled(true);
@@ -2568,8 +1961,6 @@ void MedianXLOfflineTools::updateUI()
     updateStatusTips(stats, stats - charInfo.valueOfStatistic(Enums::CharacterStats::FreeStatPoints), skills, skills - charInfo.valueOfStatistic(Enums::CharacterStats::FreeSkillPoints));
     ui->signetsOfLearningEatenLineEdit->setStatusTip(maxValueFormat.arg(Enums::CharacterStats::SignetsOfLearningMax));
     ui->stashGoldLineEdit->setStatusTip(maxValueFormat.arg(QLocale().toString(Enums::CharacterStats::StashGoldMax)));
-    if (_sharedGold)
-        ui->stashGoldLineEdit->setStatusTip(ui->stashGoldLineEdit->statusTip() + ", " + tr("Shared: %1", "amount of gold in shared stash").arg(QLocale().toString(_sharedGold)));
 
     if (charInfo.mercenary.exists)
     {
@@ -2608,11 +1999,6 @@ void MedianXLOfflineTools::updateUI()
         _checkboxesQuestsHash[Enums::Quests::GoldenBird]  [i]->setChecked(charInfo.questsInfo.goldenBird  .at(i));
         _checkboxesQuestsHash[Enums::Quests::Anya]        [i]->setChecked(charInfo.questsInfo.rescueAnya  .at(i));
     }
-
-    bool hasItems = !charInfo.items.character.isEmpty();
-    ui->actionShowItems->setEnabled(hasItems);
-    ui->actionFind->setEnabled(hasItems);
-    ui->actionGiveCube->setDisabled(CharacterInfo::instance().items.hasCube());
 
     updateWindowTitle();
 
@@ -2888,74 +2274,32 @@ void MedianXLOfflineTools::addStatisticBits(QString &bitsString, quint64 number,
     bitsString.prepend(binaryStringFromNumber(number, false, fieldWidth));
 }
 
-void MedianXLOfflineTools::clearItems(bool sharedStashPathChanged1 /*= true*/, bool hcStashPathChanged1 /*= true*/, bool sharedStashPathChanged2 /*= true*/, bool hcStashPathChanged2 /*= true*/)
-{
-    QMutableListIterator<ItemInfo *> itemIterator(CharacterInfo::instance().items.character);
-    while (itemIterator.hasNext())
-    {
-        ItemInfo *item = itemIterator.next();
-        switch (item->storage)
-        {
-        case Enums::ItemStorage::SigmaSharedStash:
-            if ((sharedStashPathChanged2 || ui->actionAutoOpenSharedStash->isChecked()) && !sharedStashPathChanged1)
-                continue;
-            break;
-        case Enums::ItemStorage::SigmaHCStash:
-            if ((hcStashPathChanged2 || ui->actionAutoOpenHCShared->isChecked()) && !hcStashPathChanged1)
-                continue;
-            break;
-        case Enums::ItemStorage::SharedStash:
-            if ((sharedStashPathChanged2 || ui->actionAutoOpenSharedStash->isChecked()) && !sharedStashPathChanged2)
-                continue;
-            break;
-        case Enums::ItemStorage::HCStash:
-            if ((hcStashPathChanged2 || ui->actionAutoOpenHCShared->isChecked()) && !hcStashPathChanged2)
-                continue;
-            break;
-        default:
-            break;
-        }
-
-        delete item;
-        itemIterator.remove();
-    }
-}
-
 QString MedianXLOfflineTools::backupFile(QFile &file)
 {
-    if (ui->actionBackup->isChecked())
+    if (!ui->actionBackup->isChecked() || !file.exists())
+        return QString();
+
+    QString dateOrTimestamp = ui->actionBackupFormatTimestamp->isChecked() ? QString::number(QDateTime::currentDateTime().toSecsSinceEpoch())
+                                                                           : QDateTime::currentDateTime().toString(kTimeFormatReadable);
+    QString backupPath = QString("%1_%2.%3").arg(file.fileName(), dateOrTimestamp, kBackupExtension);
+    if (!QFile::copy(file.fileName(), backupPath))
     {
-        if (int backupsLimit = _backupLimitsGroup->checkedAction()->data().toInt())
-        {
-            QFileInfo fi(file.fileName());
-            QDir sourceFileDir(fi.canonicalPath(), QString("%1_*.%2").arg(fi.fileName()).arg(kBackupExtension), QDir::Name | QDir::IgnoreCase, QDir::Files);
-            QStringList previousBackups = sourceFileDir.entryList();
-            while (previousBackups.size() >= backupsLimit)
-                sourceFileDir.remove(previousBackups.takeFirst());
-        }
-
-        QFile backupFile(QString("%1_%2.%3").arg(file.fileName()).arg(ui->actionBackupFormatReadable->isChecked() ?
-                                                                      QDateTime::currentDateTimeUtc().toString("yyyyMMdd-hhmmss") :
-                                                                      QString::number(QDateTime::currentMSecsSinceEpoch())).arg(kBackupExtension));
-        if (backupFile.exists() && !backupFile.remove()) // it shouldn't actually exist, but let's be safe
-            showErrorMessageBoxForFile(tr("Error removing old backup '%1'"), backupFile);
-        else if (file.exists())
-        {
-            if (file.copy(backupFile.fileName()))
-                return QFileInfo(backupFile.fileName()).fileName();
-            else
-                showErrorMessageBoxForFile(tr("Error creating backup of '%1'"), file);
-        }
+        showErrorMessageBoxForFile(tr("Error creating backup for file '%1'"), file);
+        return QString();
     }
-    return QString();
-}
 
-QHash<int, bool> MedianXLOfflineTools::getPlugyStashesExistenceHash() const
-{
-    QHash<int, bool> plugyStashesExistenceHash;
-    for (QHash<Enums::ItemStorage::ItemStorageEnum, PlugyStashInfo>::const_iterator iter = _plugyStashesHash.constBegin(); iter != _plugyStashesHash.constEnd(); ++iter)
-        plugyStashesExistenceHash[iter.key()] = iter.value().exists;
-    return plugyStashesExistenceHash;
+    // enforce the configured backup limit for this file (0/unchecked action data means unlimited)
+    int limit = _backupLimitsGroup->checkedAction()->data().toInt();
+    if (limit > 0)
+    {
+        QFileInfo fileInfo(file);
+        QDir dir(fileInfo.absolutePath());
+        QStringList existingBackups = dir.entryList(QStringList() << fileInfo.fileName() + "_*." + kBackupExtension, QDir::Files, QDir::Time);
+        while (existingBackups.size() > limit)
+            QFile::remove(dir.filePath(existingBackups.takeLast()));
+    }
+
+    return QDir::toNativeSeparators(backupPath);
 }
 
 void MedianXLOfflineTools::showErrorMessageBoxForFile(const QString &message, const QFile &file)
@@ -3038,13 +2382,7 @@ void MedianXLOfflineTools::fileChangeTimerFired()
 
     _isFileChangedMessageBoxRunning = true;
     if (QUESTION_BOX_YESNO(tr("The character and/or extended stashes have been modified externally.\nDo you want to reload them?"), QMessageBox::Yes) == QMessageBox::Yes)
-    {
-        // shared stashes must be reloaded regardless of the setting
-        bool oldStashReloadValue = ui->actionReloadSharedStashes->isChecked();
-        ui->actionReloadSharedStashes->setChecked(true);
         reloadCharacter();
-        ui->actionReloadSharedStashes->setChecked(oldStashReloadValue);
-    }
     _isFileChangedMessageBoxRunning = false;
 
     delete _fileChangeTimer; _fileChangeTimer = 0;

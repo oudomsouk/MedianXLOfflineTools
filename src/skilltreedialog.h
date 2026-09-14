@@ -3,8 +3,6 @@
 
 #include <QDialog>
 
-#include "structs.h"
-
 
 class QTabWidget;
 
@@ -21,8 +19,6 @@ public slots:
 
 private:
     QTabWidget *_tabWidget;
-
-    qint32 getValueOfPropertyInSetProperties(const QList<SetFixedProperty> &setProps, quint16 propKey, quint8 propsNumber = 0, quint16 param = 0);
 };
 
 #endif // SKILLTREEDIALOG_H

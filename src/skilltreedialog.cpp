@@ -2,7 +2,7 @@
 #include "characterinfo.hpp"
 #include "itemdatabase.h"
 #include "resourcepathmanager.hpp"
-#include "helpers.h"
+#include "colorsmanager.h"
 
 #include <QTabWidget>
 #include <QLabel>
@@ -10,6 +10,8 @@
 #include <QGridLayout>
 #include <QGroupBox>
 #include <QDialogButtonBox>
+#include <QFile>
+#include <QPixmap>
 
 #include <QSettings>
 
@@ -36,13 +38,12 @@ public:
         _skillImageLabel->setPixmap(QPixmap(path));
     }
 
-    void setSkillPoints(quint8 basePoints, quint8 addPoints)
+    void setSkillPoints(quint8 basePoints)
     {
         quint8 maxClvl = Enums::CharacterStats::MaxLevel;
-        quint8 actualBasePoints  = qMin(maxClvl, basePoints);
-        quint8 actualTotalPoints = qMin(maxClvl, static_cast<quint8>(basePoints + addPoints));
+        quint8 actualBasePoints = qMin(maxClvl, basePoints);
 
-        _skillPointsLabel->setText(addPoints ? QString("%1 (%2)").arg(actualBasePoints).arg(actualTotalPoints) : QString::number(actualBasePoints));
+        _skillPointsLabel->setText(QString::number(actualBasePoints));
         if (!basePoints)
             setDisabled(true);
     }
@@ -52,53 +53,14 @@ private:
 };
 
 
+// This dialog only shows base skill points invested by the character. Item-granted skill bonuses are not
+// shown, since this stripped-down build no longer parses items.
 SkillTreeDialog::SkillTreeDialog(QWidget *parent /*= 0*/) : QDialog(parent), _tabWidget(new QTabWidget(this))
 {
     setWindowFlags(windowFlags() & ~Qt::WindowContextHelpButtonHint);
     setWindowTitle(tr("Skill tree"));
 
     const CharacterInfo::CharacterInfoBasic &charInfo = CharacterInfo::instance().basicInfo;
-    qint32 addSkillPoints = 0;
-    ItemsList itemsWithBonuses;
-    QMultiHash<QByteArray, int> setItemsHash;
-
-    foreach (ItemInfo *item, CharacterInfo::instance().items.character) //-V807
-    {
-        if (ItemDataBase::doesItemGrantBonus(item))
-        {
-            itemsWithBonuses << item;
-            addSkillPoints += getValueOfPropertyInItem(item, Enums::ItemProperties::AllSkills);
-            addSkillPoints += getValueOfPropertyInItem(item, Enums::ItemProperties::ClassSkills, charInfo.classCode);
-
-            if (item->quality == Enums::ItemQuality::Set)
-                if (SetItemInfo *setItem = ItemDataBase::Sets()->value(item->setOrUniqueId))
-                    setItemsHash.insert(setItem->key, item->setOrUniqueId);
-        }
-    }
-
-    foreach (const QByteArray &setKey, setItemsHash.uniqueKeys())
-    {
-        QList<int> setItemIds = setItemsHash.values(setKey);
-        if (quint8 partialPropsNumber = (setItemIds.size() - 1) * 2)
-        {
-            foreach (int setId, setItemIds)
-            {
-                const QList<SetFixedProperty> &setProps = ItemDataBase::Sets()->value(setId)->fixedProperties;
-                addSkillPoints += getValueOfPropertyInSetProperties(setProps, Enums::ItemProperties::AllSkills,   partialPropsNumber);
-                addSkillPoints += getValueOfPropertyInSetProperties(setProps, Enums::ItemProperties::ClassSkills, partialPropsNumber, charInfo.classCode);
-            }
-
-            const FullSetInfo fullSetInfo = ItemDataBase::fullSetInfoForKey(setKey);
-            addSkillPoints += getValueOfPropertyInSetProperties(fullSetInfo.partialSetProperties, Enums::ItemProperties::AllSkills,   partialPropsNumber);
-            addSkillPoints += getValueOfPropertyInSetProperties(fullSetInfo.partialSetProperties, Enums::ItemProperties::ClassSkills, partialPropsNumber, charInfo.classCode);
-
-            if (setItemIds.size() == fullSetInfo.itemNames.size())
-            {
-                addSkillPoints += getValueOfPropertyInSetProperties(fullSetInfo.fullSetProperties, Enums::ItemProperties::AllSkills,   partialPropsNumber);
-                addSkillPoints += getValueOfPropertyInSetProperties(fullSetInfo.fullSetProperties, Enums::ItemProperties::ClassSkills, partialPropsNumber, charInfo.classCode);
-            }
-        }
-    }
 
     // TODO: query number of tabs dynamically for each class
     // TODO: tab names
@@ -119,12 +81,7 @@ SkillTreeDialog::SkillTreeDialog(QWidget *parent /*= 0*/) : QDialog(parent), _ta
             if (skill->tab != tabIndex)
                 break;
 
-            qint32 baseSkillPoints = charInfo.skillsReadable.at(j), totalSkillPoints = baseSkillPoints ? addSkillPoints : 0;
-            foreach (ItemInfo *item, itemsWithBonuses)
-            {
-                totalSkillPoints += getValueOfPropertyInItem(item, Enums::ItemProperties::ClassOnlySkill, skillIndex);
-                totalSkillPoints += qMin(3, getValueOfPropertyInItem(item, Enums::ItemProperties::Oskill, skillIndex));
-            }
+            qint32 baseSkillPoints = charInfo.skillsReadable.at(j);
 
             QString skillName = skill->name;
             foreach (const QByteArray &color, ColorsManager::colorStrings())
@@ -133,7 +90,7 @@ SkillTreeDialog::SkillTreeDialog(QWidget *parent /*= 0*/) : QDialog(parent), _ta
             SkillWidget *w = new SkillWidget(tab);
             w->setSkillName(skillName);
             w->setSkillImageForClassWithId(charInfo.classCode, skill->imageId);
-            w->setSkillPoints(baseSkillPoints, totalSkillPoints);
+            w->setSkillPoints(baseSkillPoints);
             grid->addWidget(w, skill->row - 1, skill->col - 1);
             ++j;
         }
@@ -155,16 +112,4 @@ void SkillTreeDialog::reject()
 {
     QSettings().setValue("skillTreePos", pos());
     QDialog::reject();
-}
-
-qint32 SkillTreeDialog::getValueOfPropertyInSetProperties(const QList<SetFixedProperty> &setProps, quint16 propKey, quint8 propsNumber /*= 0*/, quint16 param /*= 0*/)
-{
-    qint32 result = 0;
-    for (quint8 i = 0, n = propsNumber ? qMin(propsNumber, static_cast<quint8>(setProps.size())) : setProps.size(); i < n; ++i)
-    {
-        const SetFixedProperty &setProp = setProps.at(i);
-        if (setProp.ids.indexOf(propKey) != -1 && setProp.param == param)
-            result += setProp.maxValue;
-    }
-    return result;
 }

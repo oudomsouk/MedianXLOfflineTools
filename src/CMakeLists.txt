@@ -1,46 +1,20 @@
 target_sources(MedianXLOfflineTools PRIVATE
-	allstatsdialog.cpp
-	allstatsdialog.h
-	allstatsdialog.ui
 	application.cpp
 	application.h
 	characterinfo.hpp
-	checkboxsortfilterproxymodel.hpp
 	colorsmanager.cpp
 	colorsmanager.h
-	disenchantpreviewdialog.cpp
-	disenchantpreviewdialog.h
-	disenchantpreviewmodel.cpp
-	disenchantpreviewmodel.h
 	enums.cpp
 	enums.h
 	experienceindicatorgroupbox.cpp
 	experienceindicatorgroupbox.h
 	fileassociationmanager.h
-	finditemsdialog.cpp
-	finditemsdialog.h
-	finditemsdialog.ui
-	findresultswidget.cpp
-	findresultswidget.h
-	gearitemssplitter.cpp
-	gearitemssplitter.h
 	helpers.cpp
 	helpers.h
 	helpwindowdisplaymanager.cpp
 	helpwindowdisplaymanager.h
 	itemdatabase.cpp
 	itemdatabase.h
-	itemnamestreewidget.hpp
-	itemparser.cpp
-	itemparser.h
-	itemspropertiessplitter.cpp
-	itemspropertiessplitter.h
-	itemstoragetablemodel.cpp
-	itemstoragetablemodel.h
-	itemstoragetableview.cpp
-	itemstoragetableview.h
-	itemsviewerdialog.cpp
-	itemsviewerdialog.h
 	kexpandablegroupbox.cpp
 	kexpandablegroupbox.h
 	languagemanager.hpp
@@ -49,14 +23,7 @@ target_sources(MedianXLOfflineTools PRIVATE
 	medianxlofflinetools.h
 	medianxlofflinetools.ui
 	messagecheckbox.h
-	plugyitemssplitter.cpp
-	plugyitemssplitter.h
 	progressbarmodal.hpp
-	propertiesdisplaymanager.cpp
-	propertiesdisplaymanager.h
-	propertiesviewerwidget.cpp
-	propertiesviewerwidget.h
-	propertiesviewerwidget.ui
 	qd2charrenamer.cpp
 	qd2charrenamer.h
 	qd2charrenamer.ui
@@ -66,15 +33,8 @@ target_sources(MedianXLOfflineTools PRIVATE
 	resurrectpenaltydialog.ui
 	reversebitreader.cpp
 	reversebitreader.h
-	reversebitwriter.cpp
-	reversebitwriter.h
-	showselecteditemdelegate.cpp
-	showselecteditemdelegate.h
 	skilltreedialog.cpp
 	skilltreedialog.h
-	stashsortingoptionsdialog.cpp
-	stashsortingoptionsdialog.h
-	stashsortingoptionsdialog.ui
 	structs.h
 )
 

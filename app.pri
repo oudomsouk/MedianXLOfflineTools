@@ -47,30 +47,13 @@ SOURCES += src/main.cpp \
            src/qd2charrenamer.cpp \
            src/enums.cpp \
            src/itemdatabase.cpp \
-           src/propertiesviewerwidget.cpp \
-           src/itemsviewerdialog.cpp \
-           src/itemstoragetablemodel.cpp \
-           src/itemstoragetableview.cpp \
-           src/itemspropertiessplitter.cpp \
            src/helpers.cpp \
-           src/finditemsdialog.cpp \
-           src/reversebitwriter.cpp \
            src/reversebitreader.cpp \
-           src/itemparser.cpp \
-           src/propertiesdisplaymanager.cpp \
-           src/findresultswidget.cpp \
            src/application.cpp \
            src/experienceindicatorgroupbox.cpp \
-           src/plugyitemssplitter.cpp \
-           src/gearitemssplitter.cpp \
            src/kexpandablegroupbox.cpp \
-           src/showselecteditemdelegate.cpp \
-           src/disenchantpreviewdialog.cpp \
-           src/disenchantpreviewmodel.cpp \
-           src/stashsortingoptionsdialog.cpp \
            src/helpwindowdisplaymanager.cpp \
-           src/skilltreedialog.cpp \
-           src/allstatsdialog.cpp
+           src/skilltreedialog.cpp
 
 HEADERS += src/medianxlofflinetools.h \
            src/resurrectpenaltydialog.h \
@@ -79,46 +62,23 @@ HEADERS += src/medianxlofflinetools.h \
            src/colorsmanager.h \
            src/itemdatabase.h \
            src/structs.h \
-           src/propertiesviewerwidget.h \
-           src/itemsviewerdialog.h \
-           src/itemstoragetablemodel.h \
-           src/itemstoragetableview.h \
-           src/itemspropertiessplitter.h \
            src/helpers.h \
-           src/finditemsdialog.h \
            src/languagemanager.hpp \
-           src/reversebitwriter.h \
            src/reversebitreader.h \
-           src/itemparser.h \
            src/resourcepathmanager.hpp \
-           src/propertiesdisplaymanager.h \
-           src/findresultswidget.h \
            src/characterinfo.hpp \
            src/application.h \
            src/fileassociationmanager.h \
            src/messagecheckbox.h \
            src/experienceindicatorgroupbox.h \
-           src/plugyitemssplitter.h \
-           src/gearitemssplitter.h \
            src/kexpandablegroupbox.h \
-           src/showselecteditemdelegate.h \
-           src/disenchantpreviewdialog.h \
            src/progressbarmodal.hpp \
-           src/itemnamestreewidget.hpp \
-           src/disenchantpreviewmodel.h \
-           src/checkboxsortfilterproxymodel.hpp \
-           src/stashsortingoptionsdialog.h \
            src/helpwindowdisplaymanager.h \
-           src/skilltreedialog.h \
-           src/allstatsdialog.h
+           src/skilltreedialog.h
 
 FORMS += src/medianxlofflinetools.ui \
          src/resurrectpenaltydialog.ui \
-         src/qd2charrenamer.ui \
-         src/propertiesviewerwidget.ui \
-         src/finditemsdialog.ui \
-         src/stashsortingoptionsdialog.ui \
-         src/allstatsdialog.ui
+         src/qd2charrenamer.ui
 
 RESOURCES += resources/medianxlofflinetools.qrc
 

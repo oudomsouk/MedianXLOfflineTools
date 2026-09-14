@@ -21,13 +21,25 @@ set(CMAKE_AUTOUIC ON)
 set(qtComponents Core Gui Network)
 set(qtComponents5 ${qtComponents} Widgets)
 
-find_package(QT NAMES Qt5 COMPONENTS ${qtComponents5})
+find_package(QT NAMES Qt6 Qt5 COMPONENTS ${qtComponents5})
 if(QT_FOUND)
 	find_package(Qt${QT_VERSION_MAJOR} COMPONENTS ${qtComponents5} REQUIRED)
 	set(qtComponents ${qtComponents5})
 	add_compile_definitions(IS_QT5=1)
 
-	set(CMAKE_OSX_DEPLOYMENT_TARGET 10.13)
+	# Qt6's headers use std::filesystem, which requires a macOS 10.15+ deployment target
+	if(QT_VERSION_MAJOR GREATER_EQUAL 6)
+		set(CMAKE_OSX_DEPLOYMENT_TARGET 10.15)
+
+		if(APPLE)
+			# QTextCodec moved out of QtCore and into the Qt5Compat module starting with Qt6
+			find_package(Qt6 COMPONENTS Core5Compat REQUIRED)
+			list(APPEND qtComponents5 Core5Compat)
+			set(qtComponents ${qtComponents5})
+		endif()
+	else()
+		set(CMAKE_OSX_DEPLOYMENT_TARGET 10.13)
+	endif()
 else()
 	set(qtComponents4 ${qtComponents})
 	list(TRANSFORM qtComponents4 PREPEND "Qt")

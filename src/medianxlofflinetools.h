@@ -15,10 +15,7 @@
 #endif
 
 
-class ItemsViewerDialog;
-class FindItemsDialog;
 class ExperienceIndicatorGroupBox;
-class DupeScanDialog;
 
 namespace Ui { class MedianXLOfflineToolsClass; }
 class QSpinBox;
@@ -56,10 +53,6 @@ public:
     MedianXLOfflineTools(const QString &cmdPath, LaunchMode launchMode, QWidget *parent = 0, Qt::WindowFlags flags = Qt::Widget);
     virtual ~MedianXLOfflineTools();
 
-#ifdef DUPE_CHECK
-    bool shouldShowWindow;
-#endif
-
 public slots:
     bool loadFile(const QString &charPath, bool shouldCheckExtension = true, bool shouldOpenItemsWindow = true);
     void loadFileSkipExtensionCheck(const QString &charPath);
@@ -73,10 +66,6 @@ private slots:
     void switchLanguage(QAction *languageAction);
     void setModified(bool modified);
     void modify() { setModified(true); }
-
-    void eatSignetsOfLearning(int signetsEaten);
-    void updateFindResults();
-    void dupeScanFinished();
 
     void networkReplyCheckForUpdateFinished(QNetworkReply *reply);
 
@@ -92,9 +81,6 @@ private slots:
     void openRecentFile();
     void reloadCharacter(bool shouldNotify = true);
     void saveCharacter();
-#ifdef DUPE_CHECK
-    void showDupeCheck();
-#endif
 
     // edit
     void statChanged(int newValue);
@@ -104,16 +90,6 @@ private slots:
     void levelChanged(int newClvl);
     void resurrect();
     void convertToSoftcore(bool isSoftcore);
-    void findItem();
-    void showFoundItem(ItemInfo *item);
-
-    // items
-    void showItems(bool activate = true);
-    void itemStorageTabChanged(int tabIndex);
-    void giveCube();
-
-    // export
-    void showAllStats();
 
     // options
     void backupSettingTriggered(bool checked);
@@ -136,16 +112,13 @@ private:
     QMap<Enums::CharacterStats::StatisticEnum, QLineEdit *> _lineEditsStatsMap;
     QLabel *_charPathLabel;
     QStringList _recentFilesList;
-    QPointer<ItemsViewerDialog> _itemsDialog;
-    FindItemsDialog *_findItemsDialog;
     ExperienceIndicatorGroupBox *_mercExpGroupBox, *_expGroupBox;
-#if !defined(QT_NO_DEBUG_OUTPUT) && !defined(DUPE_CHECK)
+#if !defined(QT_NO_DEBUG_OUTPUT)
     QCheckBox *_makeNonLadderCheckbox;
 #endif
     QGroupBox *_questsGroupBox;
     QHash<int, QList<QCheckBox *> > _checkboxesQuestsHash;
-    QActionGroup *_backupLimitsGroup, *_showDisenchantPreviewGroup;
-    QPointer<DupeScanDialog> _dupeScanDialog;
+    QActionGroup *_backupLimitsGroup;
 
     // data
     QString _charPath;
@@ -153,8 +126,6 @@ private:
     int _oldStatValues[4];
     QMap<Enums::ClassName::ClassNameEnum, BaseStats> _baseStatsMap;
     int _oldClvl;
-    quint32 _sharedGold;
-    QHash<Enums::ItemStorage::ItemStorageEnum, PlugyStashInfo> _plugyStashesHash;
     ResurrectPenaltyDialog::ResurrectionPenalty _resurrectionPenalty;
     bool _isLoaded;
 
@@ -238,10 +209,6 @@ private:
 
     QByteArray statisticBytes();
     inline void addStatisticBits(QString &bitsString, quint64 number, int fieldWidth);
-
-    void processPlugyStash(QHash<Enums::ItemStorage::ItemStorageEnum, PlugyStashInfo>::iterator &iter, ItemsList *items);
-    QHash<int, bool> getPlugyStashesExistenceHash() const;
-    void clearItems(bool sharedStashPathChanged1 = true, bool hcStashPathChanged1 = true, bool sharedStashPathChanged2 = true, bool hcStashPathChanged2 = true);
 
     QString backupFile(QFile &file);
     void showErrorMessageBoxForFile(const QString &message, const QFile &file);

@@ -72,15 +72,14 @@ public:
         quint8 level; // immutable
     } mercenary;
 
-    struct
-    {
-        ItemsList character;
+    // items are intentionally not parsed by this stripped-down build: everything from the very first "JM"
+    // marker (start of character items) to the end of the file is left completely untouched. It is preserved
+    // automatically because the save file is always edited in place (the whole file is copied and only the
+    // stats/skills region before it is patched), so no separate storage of the item bytes is needed here.
 
-        bool hasCube() { return std::find_if(character.constBegin(), character.constEnd(), isCubeInCharacterItems) != character.constEnd(); }
-    } items;
-
-    // itemsOffset points to the number of character items - just after the very first JM
-    quint32 skillsOffset, itemsOffset, itemsEndOffset;
+    // skillsOffset points to the "if" skills header; itemsOffset points to the first byte after the "JM" marker
+    // that begins the character items (i.e. where the untouched blob begins)
+    quint32 skillsOffset, itemsOffset;
 
 private:
     CharacterInfo() {}
