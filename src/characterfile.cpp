@@ -1,6 +1,7 @@
 #include "characterfile.h"
 #include "characterinfo.hpp"
 #include "itemdatabase.h"
+#include "resourcepathmanager.hpp"
 #include "reversebitreader.h"
 #include "structs.h"
 
@@ -23,28 +24,51 @@ QString binaryStringFromNumber(quint64 number, int fieldWidth)
     return QString("%1").arg(number, fieldWidth, 2, QChar('0'));
 }
 
-// Median XL's per-class starting stats. Mirrors MedianXLOfflineTools::loadBaseStats()'s hardcoded fallback table;
-// kept as a self-contained copy here since the CLI doesn't build the whole GUI's data-loading machinery.
+// Per-class starting stats. Prefers the mod's basestats.dat (same source and format the GUI used to read via
+// MedianXLOfflineTools::loadBaseStats()), falling back to Median XL's known default values if that file is
+// missing so the tool still works against a bare checkout of the repo.
+const QHash<ClassName::ClassNameEnum, BaseStats> &allBaseStats()
+{
+    static QHash<ClassName::ClassNameEnum, BaseStats> baseStatsMap;
+    if (baseStatsMap.isEmpty())
+    {
+        QByteArray fileData = ItemDataBase::decompressedFileData(ResourcePathManager::dataPathForFileName("basestats.dat"), "Base stats data not loaded, using predefined one.");
+        if (!fileData.isEmpty())
+        {
+            foreach (const QByteArray &s, fileData.split('\n'))
+            {
+                if (!s.isEmpty() && s.at(0) != '#')
+                {
+                    QList<QByteArray> numbers = s.trimmed().split('\t');
+                    if (numbers.size() >= 12)
+                        baseStatsMap[static_cast<ClassName::ClassNameEnum>(numbers.at(0).toUInt())] = BaseStats
+                            (
+                            // order is correct: energy value comes before vitality in the file
+                            BaseStats::StatsAtStart (numbers.at(1).toInt(), numbers.at(2).toInt(),  numbers.at(4).toInt(), numbers.at(3).toInt(), numbers.at(5).toInt()),
+                            BaseStats::StatsPerLevel(numbers.at(6).toInt(), numbers.at(7).toInt(),  numbers.at(8).toInt()),
+                            BaseStats::StatsPerPoint(numbers.at(9).toInt(), numbers.at(10).toInt(), numbers.at(11).toInt())
+                            );
+                }
+            }
+        }
+
+        if (baseStatsMap.isEmpty())
+        {
+            baseStatsMap[ClassName::Amazon]      = BaseStats(BaseStats::StatsAtStart(25, 25, 20, 15, 84), BaseStats::StatsPerLevel(100, 40, 60), BaseStats::StatsPerPoint( 8, 8, 18));
+            baseStatsMap[ClassName::Sorceress]   = BaseStats(BaseStats::StatsAtStart(10, 25, 15, 35, 74), BaseStats::StatsPerLevel(100, 40, 60), BaseStats::StatsPerPoint( 8, 8, 18));
+            baseStatsMap[ClassName::Necromancer] = BaseStats(BaseStats::StatsAtStart(15, 25, 20, 25, 79), BaseStats::StatsPerLevel( 80, 20, 80), BaseStats::StatsPerPoint( 4, 8, 24));
+            baseStatsMap[ClassName::Paladin]     = BaseStats(BaseStats::StatsAtStart(25, 20, 25, 15, 89), BaseStats::StatsPerLevel(120, 60, 40), BaseStats::StatsPerPoint(12, 8, 12));
+            baseStatsMap[ClassName::Barbarian]   = BaseStats(BaseStats::StatsAtStart(30, 20, 30,  5, 92), BaseStats::StatsPerLevel(120, 60, 40), BaseStats::StatsPerPoint(12, 8, 12));
+            baseStatsMap[ClassName::Druid]       = BaseStats(BaseStats::StatsAtStart(25, 20, 15, 25, 84), BaseStats::StatsPerLevel( 80, 20, 80), BaseStats::StatsPerPoint( 4, 8, 24));
+            baseStatsMap[ClassName::Assassin]    = BaseStats(BaseStats::StatsAtStart(20, 35, 15, 15, 95), BaseStats::StatsPerLevel(100, 40, 60), BaseStats::StatsPerPoint( 8, 8, 18));
+        }
+    }
+    return baseStatsMap;
+}
+
 BaseStats baseStatsForClass(ClassName::ClassNameEnum classCode)
 {
-    switch (classCode)
-    {
-    case ClassName::Amazon:
-        return BaseStats(BaseStats::StatsAtStart(25, 25, 20, 15, 84), BaseStats::StatsPerLevel(100, 40, 60), BaseStats::StatsPerPoint( 8, 8, 18));
-    case ClassName::Sorceress:
-        return BaseStats(BaseStats::StatsAtStart(10, 25, 15, 35, 74), BaseStats::StatsPerLevel(100, 40, 60), BaseStats::StatsPerPoint( 8, 8, 18));
-    case ClassName::Necromancer:
-        return BaseStats(BaseStats::StatsAtStart(15, 25, 20, 25, 79), BaseStats::StatsPerLevel( 80, 20, 80), BaseStats::StatsPerPoint( 4, 8, 24));
-    case ClassName::Paladin:
-        return BaseStats(BaseStats::StatsAtStart(25, 20, 25, 15, 89), BaseStats::StatsPerLevel(120, 60, 40), BaseStats::StatsPerPoint(12, 8, 12));
-    case ClassName::Barbarian:
-        return BaseStats(BaseStats::StatsAtStart(30, 20, 30,  5, 92), BaseStats::StatsPerLevel(120, 60, 40), BaseStats::StatsPerPoint(12, 8, 12));
-    case ClassName::Druid:
-        return BaseStats(BaseStats::StatsAtStart(25, 20, 15, 25, 84), BaseStats::StatsPerLevel( 80, 20, 80), BaseStats::StatsPerPoint( 4, 8, 24));
-    case ClassName::Assassin:
-    default:
-        return BaseStats(BaseStats::StatsAtStart(20, 35, 15, 15, 95), BaseStats::StatsPerLevel(100, 40, 60), BaseStats::StatsPerPoint( 8, 8, 18));
-    }
+    return allBaseStats().value(classCode);
 }
 
 const int kStatPointsPerLevel = 5;
