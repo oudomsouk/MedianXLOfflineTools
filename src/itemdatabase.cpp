@@ -1,13 +1,9 @@
 #include "itemdatabase.h"
-#include "helpers.h"
 #include "resourcepathmanager.hpp"
 
 #include <QBuffer>
 #include <QFile>
-
-#ifndef QT_NO_DEBUG
 #include <QDebug>
-#endif
 
 #define TO_UINT16(byteArray) (static_cast<quint8>(byteArray.at(0)) + (static_cast<quint8>(byteArray.at(1)) << 8))
 #if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
@@ -24,7 +20,7 @@ QByteArray ItemDataBase::decompressedFileData(const QString &compressedFilePath,
     QFile f(compressedFilePath);
     if (!f.open(QIODevice::ReadOnly))
     {
-        ERROR_BOX_NO_PARENT(errorMessage + "\n" + tr("Reason: %1").arg(f.errorString()));
+        qWarning("%s", qPrintable(errorMessage + "\n" + tr("Reason: %1").arg(f.errorString())));
         return QByteArray();
     }
 
@@ -34,14 +30,14 @@ QByteArray ItemDataBase::decompressedFileData(const QString &compressedFilePath,
     QByteArray compressedDataFile = f.readAll();
     if (CRC_OF_BYTEARRAY(compressedDataFile) != compressedCrc)
     {
-        ERROR_BOX_NO_PARENT(decompressError.arg(compressedFilePath));
+        qWarning("%s", qPrintable(decompressError.arg(compressedFilePath)));
         return QByteArray();
     }
 
     QByteArray originalFileData = qUncompress(compressedDataFile);
     if (CRC_OF_BYTEARRAY(originalFileData) != originalCrc)
     {
-        ERROR_BOX_NO_PARENT(decompressError.arg(compressedFilePath));
+        qWarning("%s", qPrintable(decompressError.arg(compressedFilePath)));
         return QByteArray();
     }
 
@@ -146,7 +142,7 @@ QHash<quint32, QString> *ItemDataBase::StringTable()
             QFile f(ResourcePathManager::localizedPathForFileName(tblName));
             if (!f.open(QIODevice::ReadOnly))
             {
-                ERROR_BOX_NO_PARENT(tr("String table '%1' not loaded.").arg(tblName) + "\n" + tr("Reason: %1").arg(f.errorString()));
+                qWarning("%s", qPrintable(tr("String table '%1' not loaded.").arg(tblName) + "\n" + tr("Reason: %1").arg(f.errorString())));
                 return 0;
             }
 

@@ -23,6 +23,7 @@ target_sources(MedianXLOfflineTools PRIVATE
 	medianxlofflinetools.h
 	medianxlofflinetools.ui
 	messagecheckbox.h
+	messageboxhelpers.h
 	progressbarmodal.hpp
 	qd2charrenamer.cpp
 	qd2charrenamer.h

@@ -1,6 +1,7 @@
 #include "medianxlofflinetools.h"
 #include "fileassociationmanager.h"
 #include "windowsincludes.h"
+#include "messageboxhelpers.h"
 
 #include <QString>
 #include <QDir>

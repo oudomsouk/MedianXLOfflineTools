@@ -3,6 +3,7 @@
 #include "colorsmanager.h"
 #include "qd2charrenamer.h"
 #include "helpers.h"
+#include "messageboxhelpers.h"
 #include "itemdatabase.h"
 #include "resourcepathmanager.hpp"
 #include "reversebitreader.h"

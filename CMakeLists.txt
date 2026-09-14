@@ -108,6 +108,29 @@ if(NOT APPLE)
     target_compile_definitions(MedianXLOfflineTools PRIVATE HAS_QTSINGLEAPPLICATION=1)
 endif()
 
+# CLI tool: headless equivalent of the GUI's view/respec-stats/respec-skills/backup-on-save features.
+# Links against QtCore only (no Widgets/Gui/Network) since it never touches items or shows any UI.
+add_executable(mxl
+	src/characterfile.cpp
+	src/characterfile.h
+	src/characterinfo.hpp
+	src/enums.cpp
+	src/enums.h
+	src/itemdatabase.cpp
+	src/itemdatabase.h
+	src/languagemanager.hpp
+	src/main_cli.cpp
+	src/resourcepathmanager.hpp
+	src/reversebitreader.cpp
+	src/reversebitreader.h
+	src/structs.h
+)
+target_link_libraries(mxl PRIVATE "Qt${QT_VERSION_MAJOR}::Core")
+target_compile_definitions(mxl PRIVATE
+	"$<$<CONFIG:Debug>:DATA_PATH=\"${CMAKE_SOURCE_DIR}/resources\">"
+)
+install(TARGETS mxl RUNTIME DESTINATION ".")
+
 # install
 
 install(TARGETS MedianXLOfflineTools

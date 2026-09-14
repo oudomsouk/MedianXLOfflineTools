@@ -1,6 +1,7 @@
 #include "fileassociationmanager.h"
 #include "windowsincludes.h"
 #include "helpers.h"
+#include "messageboxhelpers.h"
 
 #include <QDir>
 #include <QFileInfo>

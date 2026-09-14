@@ -2,6 +2,7 @@
 #include "ui_qd2charrenamer.h"
 #include "colorsmanager.h"
 #include "helpers.h"
+#include "messageboxhelpers.h"
 #include "messagecheckbox.h"
 
 #include <QMenu>

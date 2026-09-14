@@ -1,5 +1,6 @@
 #include "fileassociationmanager.h"
 #include "helpers.h"
+#include "messageboxhelpers.h"
 
 #import "machelpers.h"
 
